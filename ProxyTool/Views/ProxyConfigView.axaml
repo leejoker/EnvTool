@@ -1,0 +1,89 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:ProxyTool.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+             x:Class="ProxyTool.Views.ProxyConfigView"
+             x:DataType="vm:ProxyConfigViewModel">
+  <Design.DataContext>
+    <vm:ProxyConfigViewModel />
+  </Design.DataContext>
+
+  <UserControl.Styles>
+    <Style Selector="Button">
+      <Setter Property="FontFamily" Value="微软雅黑"/>
+      <Setter Property="FontWeight" Value="Bold"/>
+    </Style>
+
+    <Style Selector="DockPanel.header">
+      <Setter Property="Width" Value="300"/>
+      <Setter Property="Height" Value="50"/>
+      <Setter Property="VerticalAlignment" Value="Top"/>
+    </Style>
+    <Style Selector="Button.back">
+      <Setter Property="HorizontalAlignment" Value="Left"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="Margin" Value="5 0 0 0"/>
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="Width" Value="40"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="Separator.sep">
+      <Setter Property="Width" Value="300"/>
+      <Setter Property="Margin" Value="0 0 0 10"/>
+    </Style>
+    <Style Selector="Grid.body">
+      <Setter Property="Width" Value="300"/>
+      <Setter Property="Height" Value="233"/>
+    </Style>
+    <Style Selector="Grid.body TextBlock">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="HorizontalAlignment" Value="Center"/>
+      <Setter Property="Margin" Value="20 0 0 0"/>
+    </Style>
+    <Style Selector="Grid.body TextBox">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="HorizontalAlignment" Value="Center"/>
+      <Setter Property="Width" Value="200"/>
+      <Setter Property="Margin" Value="20 0 0 0"/>
+    </Style>
+    <Style Selector="DockPanel.bottom">
+      <Setter Property="VerticalAlignment" Value="Bottom"/>
+      <Setter Property="HorizontalAlignment" Value="Center"/>
+      <Setter Property="Height" Value="30"/>
+    </Style>
+    <Style Selector="DockPanel.bottom Button">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="HorizontalAlignment" Value="Center"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="Width" Value="310"/>
+      <Setter Property="Height" Value="30"/>
+    </Style>
+  </UserControl.Styles>
+
+  <WrapPanel>
+    <DockPanel Classes="header">
+      <Button Classes="back">&lt;</Button>
+    </DockPanel>
+    <Separator Classes="sep"/>
+    <Grid Classes="body">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="50"/>
+        <ColumnDefinition Width="200"/>
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="50"/>
+        <RowDefinition Height="50"/>
+      </Grid.RowDefinitions>
+      <TextBlock Grid.Row="0" Grid.Column="0">Host: </TextBlock>
+      <TextBox Grid.Row="0" Grid.Column="1"/>
+      <TextBlock Grid.Row="1" Grid.Column="0">Port: </TextBlock>
+      <TextBox Grid.Row="1" Grid.Column="1"/>
+    </Grid>
+    <DockPanel Classes="bottom">
+      <Button Content="Confirm"/>
+    </DockPanel>
+  </WrapPanel>
+</UserControl>

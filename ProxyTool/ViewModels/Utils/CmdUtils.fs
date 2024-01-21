@@ -4,15 +4,18 @@ open System.Diagnostics
 open System
 
 module CmdUtils =
-    let private SetProcessInfo (p: Process) : Process =
+    let private SetProcessInfo (p: Process) =
         p.StartInfo.FileName <- "cmd.exe"
         p.StartInfo.UseShellExecute <- false
         p.StartInfo.RedirectStandardInput <- true
         p.StartInfo.RedirectStandardOutput <- true
         p.StartInfo.RedirectStandardError <- true
         p.StartInfo.CreateNoWindow <- true
-        p.Start() |> ignore
-        p
+
+        p.Start()
+        |> function
+            | true -> Ok p
+            | false -> Error p
 
     let private RunCmd (p: Process, command: string) : Process =
         p.StandardInput.WriteLine(command + "&exit")
@@ -25,8 +28,10 @@ module CmdUtils =
         let output =
             p
             |> SetProcessInfo
-            |> (fun p -> RunCmd(p, cmd))
-            |> fun p -> p.StandardOutput.ReadToEnd()
+            |> function
+                | Ok p -> RunCmd(p, cmd) |> fun p -> p.StandardOutput.ReadToEnd()
+                | _ -> ""
+
 
         p.WaitForExit()
         p.Close()

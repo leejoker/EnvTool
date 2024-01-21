@@ -1,7 +1,5 @@
 ﻿namespace ProxyTool.ViewModels.Utils
 
-open System.Diagnostics
-open System
 open MsBox.Avalonia
 open MsBox.Avalonia.Enums
 

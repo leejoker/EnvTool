@@ -19,8 +19,10 @@
     <Compile Include="ViewModels\Utils\CmdUtils.fs" />
     <Compile Include="ViewModels\ViewModelBase.fs" />
     <Compile Include="ViewModels\MainViewModel.fs" />
+    <Compile Include="ViewModels\ProxyConfigViewModel.fs" />
     <Compile Include="Views\MainWindow.axaml.fs" />
     <Compile Include="Views\MainView.axaml.fs" />
+    <Compile Include="Views\ProxyConfigView.axaml.fs" />
     <Compile Include="App.axaml.fs" />
   </ItemGroup>
 
