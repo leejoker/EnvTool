@@ -2,14 +2,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:ProxyTool.ViewModels"
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
-             x:Class="ProxyTool.Views.MainView"
-             x:DataType="vm:MainViewModel">
-  <Design.DataContext>
-    <vm:MainViewModel />
-  </Design.DataContext>
-
+             x:Class="ProxyTool.Views.MainView">
+  
   <UserControl.Styles>
     <Style Selector="Button">
       <Setter Property="FontFamily" Value="微软雅黑"/>
@@ -51,10 +46,10 @@
     </Style>
   </UserControl.Styles>
 
-  <WrapPanel>
+  <StackPanel>
     <DockPanel Classes="header">
       <TextBlock Classes="title">ProxyTool</TextBlock>
-      <Button Classes="config">Config</Button>
+      <Button Classes="config" x:CompileBindings="False" Command="{Binding $parent[Window].DataContext.ProxyConfig}">Config</Button>
     </DockPanel>
     <Separator Classes="sep"/>
     <Grid Classes="body">
@@ -67,16 +62,12 @@
         <RowDefinition Height="50"/>
         <RowDefinition Height="50"/>
       </Grid.RowDefinitions>
-      <Button Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Name="SetGitProxy" Content="配置 Git 代理" Command="{Binding HandleUnsetGitProxy}">
-        <!--<Button.CommandParameter>
-          
-        </Button.CommandParameter>-->
-      </Button>
+      <Button Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Name="SetGitProxy" Content="配置 Git 代理" Command="{Binding HandleSetGitProxy}"/>
       <Button Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Name="UnsetGitProxy" Command="{Binding HandleUnsetGitProxy}" Content="关闭 Git 代理"/>
       <Button Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">配置 NPM 代理</Button>
       <Button Grid.Row="1" Grid.Column="1" VerticalAlignment="Center">关闭 NPM 代理</Button>
       <Button Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">配置 GoLang 代理</Button>
       <Button Grid.Row="2" Grid.Column="1" VerticalAlignment="Center">关闭 GoLang 代理</Button>
     </Grid>
-  </WrapPanel>
+  </StackPanel>
 </UserControl>

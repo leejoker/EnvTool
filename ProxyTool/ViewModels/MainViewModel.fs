@@ -6,7 +6,10 @@ open ProxyTool.ViewModels.Utils.MessageBoxUtils
 type MainViewModel() =
     inherit ViewModelBase()
 
-    member this.HandleSetGitProxy(host: string, port: int) =
+    let mutable host = "127.0.0.1"
+    let mutable port = 10809
+
+    member this.HandleSetGitProxy() =
         let gitHttpProxy = $"http://{host}:{port}"
         let gitHttpsProxy = $"https://{host}:{port}"
 

@@ -2,13 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:ProxyTool.ViewModels"
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
-             x:Class="ProxyTool.Views.ProxyConfigView"
-             x:DataType="vm:ProxyConfigViewModel">
-  <Design.DataContext>
-    <vm:ProxyConfigViewModel />
-  </Design.DataContext>
+             x:Class="ProxyTool.Views.ProxyConfigView">
 
   <UserControl.Styles>
     <Style Selector="Button">
@@ -35,7 +30,7 @@
     </Style>
     <Style Selector="Grid.body">
       <Setter Property="Width" Value="300"/>
-      <Setter Property="Height" Value="233"/>
+      <Setter Property="Height" Value="358"/>
     </Style>
     <Style Selector="Grid.body TextBlock">
       <Setter Property="VerticalAlignment" Value="Center"/>
@@ -58,12 +53,12 @@
       <Setter Property="HorizontalAlignment" Value="Center"/>
       <Setter Property="HorizontalContentAlignment" Value="Center"/>
       <Setter Property="VerticalContentAlignment" Value="Center"/>
-      <Setter Property="Width" Value="310"/>
+      <Setter Property="Width" Value="300"/>
       <Setter Property="Height" Value="30"/>
     </Style>
   </UserControl.Styles>
 
-  <WrapPanel>
+  <StackPanel>
     <DockPanel Classes="header">
       <Button Classes="back">&lt;</Button>
     </DockPanel>
@@ -85,5 +80,5 @@
     <DockPanel Classes="bottom">
       <Button Content="Confirm"/>
     </DockPanel>
-  </WrapPanel>
+  </StackPanel>
 </UserControl>
