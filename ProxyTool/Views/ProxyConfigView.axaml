@@ -60,7 +60,7 @@
 
   <StackPanel>
     <DockPanel Classes="header">
-      <Button Classes="back">&lt;</Button>
+      <Button Classes="back" Command="{Binding BackCommand}">&lt;</Button>
     </DockPanel>
     <Separator Classes="sep"/>
     <Grid Classes="body">
