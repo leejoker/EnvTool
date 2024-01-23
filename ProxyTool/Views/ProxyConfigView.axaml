@@ -73,9 +73,9 @@
         <RowDefinition Height="50"/>
       </Grid.RowDefinitions>
       <TextBlock Grid.Row="0" Grid.Column="0">Host: </TextBlock>
-      <TextBox Grid.Row="0" Grid.Column="1"/>
+      <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Host}"/>
       <TextBlock Grid.Row="1" Grid.Column="0">Port: </TextBlock>
-      <TextBox Grid.Row="1" Grid.Column="1"/>
+      <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Port}"/>
     </Grid>
     <DockPanel Classes="bottom">
       <Button Content="Confirm"/>
