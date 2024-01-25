@@ -2,12 +2,22 @@
 
 open ProxyTool.ViewModels.Utils.CmdUtils
 open ProxyTool.ViewModels.Utils.MessageBoxUtils
+open ProxyTool.DataModels
 
-type MainViewModel() =
+type MainViewModel(proxy: ProxyConfigModel) =
     inherit ViewModelBase()
 
-    let mutable host = "127.0.0.1"
-    let mutable port = 10809
+    let _proxy = proxy
+    let mutable host = _proxy.Host
+    let mutable port = _proxy.Port
+
+    member this.Host
+        with get () = host
+        and set v = host <- v
+
+    member this.Port
+        with get () = port
+        and set v = port <- v
 
     member this.HandleSetGitProxy() =
         let gitHttpProxy = $"http://{host}:{port}"

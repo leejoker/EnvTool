@@ -78,7 +78,7 @@
       <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Port}"/>
     </Grid>
     <DockPanel Classes="bottom">
-      <Button Content="Confirm"/>
+      <Button Content="Confirm" Command="{Binding ConfirmCommand}"/>
     </DockPanel>
   </StackPanel>
 </UserControl>
