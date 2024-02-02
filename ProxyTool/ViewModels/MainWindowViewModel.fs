@@ -32,7 +32,9 @@ type MainWindowViewModel() as this =
     member this.ProxyConfig() =
         let proxyConfigModel = new ProxyConfigViewModel(this.ProxyConfigModel)
 
-        proxyConfigModel.BackCommand.Subscribe(fun _ -> this.ContentViewModel <- _mainViewModel)
+        proxyConfigModel.BackCommand.Subscribe(fun _ ->
+            _mainViewModel <- new MainViewModel(this.ProxyConfigModel)
+            this.ContentViewModel <- _mainViewModel)
         |> ignore
 
         proxyConfigModel.ConfirmCommand.Subscribe(fun p ->
