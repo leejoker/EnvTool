@@ -59,15 +59,9 @@
       </Grid.ColumnDefinitions>
       <Grid.RowDefinitions>
         <RowDefinition Height="50"/>
-        <RowDefinition Height="50"/>
-        <RowDefinition Height="50"/>
       </Grid.RowDefinitions>
       <Button Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Name="SetGitProxy" Content="配置 Git 代理" Command="{Binding HandleSetGitProxy}"/>
       <Button Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Name="UnsetGitProxy" Command="{Binding HandleUnsetGitProxy}" Content="关闭 Git 代理"/>
-      <Button Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">配置 NPM 代理</Button>
-      <Button Grid.Row="1" Grid.Column="1" VerticalAlignment="Center">关闭 NPM 代理</Button>
-      <Button Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">配置 GoLang 代理</Button>
-      <Button Grid.Row="2" Grid.Column="1" VerticalAlignment="Center">关闭 GoLang 代理</Button>
     </Grid>
   </StackPanel>
 </UserControl>
