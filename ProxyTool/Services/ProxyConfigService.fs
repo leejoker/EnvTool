@@ -2,7 +2,8 @@
 
 open ProxyTool.DataModels
 open System.IO
-open System.Text.Json
+open Newtonsoft.Json
+open System.Text
 
 type ProxyConfigService() =
 
@@ -15,12 +16,10 @@ type ProxyConfigService() =
             | false -> Directory.CreateDirectory("./config") |> ignore
             | _ -> ()
 
-        use fs = File.OpenWrite(configPath)
-        JsonSerializer.Serialize(fs, proxy)
+        File.WriteAllText(configPath, JsonConvert.SerializeObject(proxy))
 
     member this.LoadFromFile(filePath: string) =
-        use fs = File.OpenRead(filePath)
-        JsonSerializer.Deserialize<ProxyConfigModel>(fs)
+        File.ReadAllText(filePath) |> JsonConvert.DeserializeObject<ProxyConfigModel>
 
     member this.LoadConfig() =
         Directory.Exists("config")
