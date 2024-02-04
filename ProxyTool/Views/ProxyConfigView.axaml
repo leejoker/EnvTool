@@ -30,7 +30,7 @@
     </Style>
     <Style Selector="Grid.body">
       <Setter Property="Width" Value="300"/>
-      <Setter Property="Height" Value="358"/>
+      <Setter Property="Height" Value="329"/>
     </Style>
     <Style Selector="Grid.body TextBlock">
       <Setter Property="VerticalAlignment" Value="Center"/>
@@ -56,6 +56,14 @@
       <Setter Property="Width" Value="300"/>
       <Setter Property="Height" Value="30"/>
     </Style>
+    <Style Selector="TabControl">
+      <Setter Property="Margin" Value="0 -20 0 0"/>
+    </Style>
+    <Style Selector="TabControl TabItem">
+      <Setter Property="FontSize" Value="10"/>
+      <Setter Property="FontFamily" Value="微软雅黑"/>
+      <Setter Property="FontWeight" Value="Bold"/>
+    </Style>
   </UserControl.Styles>
 
   <StackPanel>
@@ -63,20 +71,30 @@
       <Button Classes="back" Command="{Binding BackCommand}">&lt;</Button>
     </DockPanel>
     <Separator Classes="sep"/>
-    <Grid Classes="body">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="50"/>
-        <ColumnDefinition Width="200"/>
-      </Grid.ColumnDefinitions>
-      <Grid.RowDefinitions>
-        <RowDefinition Height="50"/>
-        <RowDefinition Height="50"/>
-      </Grid.RowDefinitions>
-      <TextBlock Grid.Row="0" Grid.Column="0">Host: </TextBlock>
-      <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Host}"/>
-      <TextBlock Grid.Row="1" Grid.Column="0">Port: </TextBlock>
-      <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Port}"/>
-    </Grid>
+    <TabControl>
+      <TabItem Header="Global">
+         <Grid Classes="body">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50"/>
+            <ColumnDefinition Width="200"/>
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+          </Grid.RowDefinitions>
+          <TextBlock Grid.Row="0" Grid.Column="0">Host: </TextBlock>
+          <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Host}"/>
+          <TextBlock Grid.Row="1" Grid.Column="0">Port: </TextBlock>
+          <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Port}"/>
+        </Grid>
+      </TabItem>
+      <!-- <TabItem Header="Tab 2">
+        <TextBlock Margin="5">This is tab 2 content</TextBlock>
+      </TabItem>
+      <TabItem Header="Tab 3">
+        <TextBlock Margin="5">This is tab 3 content</TextBlock>
+      </TabItem> -->
+    </TabControl>
     <DockPanel Classes="bottom">
       <Button Content="Confirm" Command="{Binding ConfirmCommand}"/>
     </DockPanel>
