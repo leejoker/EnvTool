@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
              x:Class="ProxyTool.Views.MainView">
-  
+
   <UserControl.Styles>
     <Style Selector="Button">
       <Setter Property="FontFamily" Value="微软雅黑"/>
@@ -20,7 +20,7 @@
       <Setter Property="Height" Value="45"/>
       <Setter Property="FontSize" Value="12"/>
     </Style>
-    
+
     <Style Selector="DockPanel.header">
       <Setter Property="Width" Value="300"/>
       <Setter Property="Height" Value="50"/>
@@ -30,6 +30,8 @@
       <Setter Property="HorizontalAlignment" Value="Left"/>
       <Setter Property="VerticalAlignment" Value="Center"/>
       <Setter Property="Margin" Value="10"/>
+      <Setter Property="FontWeight" Value="Bold"/>
+      <Setter Property="FontSize" Value="18"/>
     </Style>
     <Style Selector="Button.config">
       <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -44,6 +46,15 @@
     <Style Selector="Grid.body">
       <Setter Property="Width" Value="300"/>
     </Style>
+    <Style Selector="Grid.body TextBlock">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="HorizontalAlignment" Value="Center"/>
+      <Setter Property="Margin" Value="20 0 0 0"/>
+    </Style>
+    <Style Selector="Grid.body ToggleSwitch">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="HorizontalAlignment" Value="Right"/>
+    </Style>
   </UserControl.Styles>
 
   <StackPanel>
@@ -54,14 +65,14 @@
     <Separator Classes="sep"/>
     <Grid Classes="body">
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="150"/>
-        <ColumnDefinition Width="150"/>
+        <ColumnDefinition Width="100"/>
+        <ColumnDefinition Width="200"/>
       </Grid.ColumnDefinitions>
       <Grid.RowDefinitions>
         <RowDefinition Height="50"/>
       </Grid.RowDefinitions>
-      <Button Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Name="SetGitProxy" Content="配置 Git 代理" Command="{Binding HandleSetGitProxy}"/>
-      <Button Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Name="UnsetGitProxy" Command="{Binding HandleUnsetGitProxy}" Content="关闭 Git 代理"/>
+      <TextBlock Grid.Row="0" Grid.Column="0">设置 Git 代理 </TextBlock>
+      <ToggleSwitch Grid.Row="0" Grid.Column="1" OffContent="" OnContent="" Command="{Binding HandleGitProxy}" IsChecked="{Binding GitProxyEnabled}"/>
     </Grid>
   </StackPanel>
 </UserControl>
