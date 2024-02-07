@@ -2,10 +2,12 @@
 
 open System.Diagnostics
 open System
+open System.Runtime.InteropServices
 
 module CmdUtils =
     let private SetProcessInfo (p: Process) =
-        p.StartInfo.FileName <- "cmd.exe"
+        let sys = if RuntimeInformation.IsOSPlatform(OSPlatform.Windows) then "cmd.exe" else "/bin/sh"
+        p.StartInfo.FileName <- sys
         p.StartInfo.UseShellExecute <- false
         p.StartInfo.RedirectStandardInput <- true
         p.StartInfo.RedirectStandardOutput <- true
