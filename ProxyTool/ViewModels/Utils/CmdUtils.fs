@@ -6,7 +6,11 @@ open System.Runtime.InteropServices
 
 module CmdUtils =
     let private SetProcessInfo (p: Process) =
-        let sys = if RuntimeInformation.IsOSPlatform(OSPlatform.Windows) then "cmd.exe" else "/bin/sh"
+#if WINDOWS
+        let sys = "cmd.exe"
+#else 
+        let sys = "/bin/sh"
+#endif
         p.StartInfo.FileName <- sys
         p.StartInfo.UseShellExecute <- false
         p.StartInfo.RedirectStandardInput <- true
