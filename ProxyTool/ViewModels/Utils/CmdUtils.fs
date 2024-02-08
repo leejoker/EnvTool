@@ -6,9 +6,9 @@ open System.Runtime.InteropServices
 
 module CmdUtils =
     let private SetProcessInfo (p: Process) =
-#if WINDOWS
+#if Windows
         let sys = "cmd.exe"
-#else 
+#else
         let sys = "/bin/sh"
 #endif
         p.StartInfo.FileName <- sys
