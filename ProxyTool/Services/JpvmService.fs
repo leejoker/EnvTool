@@ -25,7 +25,16 @@ module JpvmModule =
     let CUR_VERSION = [| JPVM_HOME; ".jdk_version" |] |> Path.Combine
     let LOG_PATH = [| JPVM_HOME; ".jpvm.log" |] |> Path.Combine
 
+    let VERSION_URL = "https://gitee.com/monkeyNaive/jpvm/raw/master/versions.json"
+
     let CheckJpvmHome () = CreateDirectory(JPVM_HOME)
+
+    let rec DownloadVersionList () =
+        if Directory.Exists(JDK_PATH) then
+            DownloadFileAsync(VERSION_URL, VERSION_PATH, null)
+        else
+            CreateDirectory(JDK_PATH)
+            DownloadVersionList()
 
     let Current () =
         CheckJpvmHome()
