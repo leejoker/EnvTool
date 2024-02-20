@@ -3,7 +3,6 @@
 open ProxyTool.DataModels
 open System.IO
 open Newtonsoft.Json
-open System.Text
 
 type ProxyConfigService() =
 
