@@ -1,36 +1,73 @@
 ﻿namespace ProxyTool.Utils
 
 open System
+open System.Collections.Generic
 open System.IO
+open System.IO.Compression
 open System.Net
 open System.Net.Http
 open System.Threading
+open ICSharpCode.SharpZipLib.GZip
+open ICSharpCode.SharpZipLib.Tar
 
 module FileUtils =
-    let SplitFile (path: string) =
-        let array = path.Split(Path.DirectorySeparatorChar)
+    //------------------------------ private functions -----------------------------------------
+    let rec private InnerWalkDir (path: string) (dict: byref<Dictionary<string, string>>) =
+        if File.Exists(path) then
+            dict.Add(path, "f")
+        else
+            dict.Add(path, "d")
 
-        let fileName =
-            array[array.Length - 1] |> fun s -> s.Substring(0, s.LastIndexOf("."))
+            if not (Directory.GetFileSystemEntries(path).Length = 0) then
+                let fileList = Directory.EnumerateFileSystemEntries(path) |> Seq.toList
 
-        let dir = array[0 .. array.Length - 2] |> Path.Combine
-        (dir, fileName)
+                for f in fileList do
+                    InnerWalkDir f &dict
 
-    // TODO
-    // let WalkDir (path: string)=
-
-
-    let rec CreateDirectory (path: string) : string =
+    let rec private InnerCreateDirectory (path: string) =
         let dir = DirectoryInfo(path)
 
         if not dir.Exists then
             if not dir.Parent.Exists then
-                CreateDirectory(dir.Parent.FullName)
+                InnerCreateDirectory(dir.Parent.FullName)
             else
                 dir.Create()
-                path
         else
-            path
+            ()
+    //------------------------------ public functions -------------------------------------------
+    let DeCompressFile (source: string, dest: string) =
+        if source.ToLower().EndsWith("zip") then
+            ZipFile.ExtractToDirectory(source, dest)
+        else if source.ToLower().EndsWith("tar.gz") then
+            use file = File.OpenRead(source)
+            use gzipStream = new GZipInputStream(file)
+            use tarArchive = TarArchive.CreateInputTarArchive(gzipStream, null)
+            tarArchive.ExtractContents(dest)
+        else
+            raise (Exception("unknown compressed file type"))
+
+    let SplitFile (path: string) =
+        let array = path.Split(Path.DirectorySeparatorChar)
+
+        let fileName =
+            array[array.Length - 1]
+            |> fun s ->
+                if s.LastIndexOf(".") = -1 then
+                    s
+                else
+                    s.Substring(0, s.LastIndexOf("."))
+
+        let dir = array[0 .. array.Length - 2] |> Path.Combine
+        ("/" + dir, fileName)
+
+    let rec CreateDirectory (path: string) =
+        InnerCreateDirectory(path)
+        path
+
+    let WalkDir (path: string) =
+        let mutable dict = Dictionary<string, string>()
+        InnerWalkDir path &dict
+        dict
 
     let DirectoryIsEmpty (path: string) =
         match Directory.Exists(path) with
@@ -41,9 +78,7 @@ module FileUtils =
         match path with
         | _ when File.Exists(path) -> path |> File.Delete
         | _ when Directory.Exists(path) && not (DirectoryIsEmpty(path)) ->
-            Directory.EnumerateFileSystemEntries(path)
-            |> Seq.toList
-            |> List.iter (fun f -> f |> CleanFile)
+            Directory.EnumerateFileSystemEntries(path) |> Seq.toList |> List.iter CleanFile
 
             Directory.Delete(path)
         | _ when Directory.Exists(path) && DirectoryIsEmpty(path) -> path |> Directory.Delete

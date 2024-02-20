@@ -1,10 +1,11 @@
 ﻿namespace ProxyTool.Utils
 
-open System
 open System.Runtime.InteropServices
 
 module SysInfo =
-    let SysArch = Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE").ToLower()
+    let SysArch = (fun () ->
+                        let arch = RuntimeInformation.ProcessArchitecture.ToString().ToLower()
+                        if arch = "arm64" then "aarch64" else arch)()
     let SysOS = 
 #if Windows
         "windows"

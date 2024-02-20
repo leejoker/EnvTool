@@ -2,7 +2,6 @@
 
 open System
 open System.IO
-open System.IO.Compression
 open Newtonsoft.Json.Linq
 open ProxyTool.Utils.FileUtils
 open ProxyTool.Utils.SysInfo
@@ -35,8 +34,7 @@ module JpvmModule =
 
     let rec DownloadVersionList (progress: IProgress<double>) =
         if Directory.Exists(JDK_PATH) then
-            if not (File.Exists(VERSION_PATH)) then
-                DownloadFileTask(VERSION_URL, VERSION_PATH, progress) |> Async.RunSynchronously
+            DownloadFileTask(VERSION_URL, VERSION_PATH, progress) |> Async.RunSynchronously
         else
             CreateDirectory(JDK_PATH) |> ignore
             DownloadVersionList(progress)
@@ -54,8 +52,22 @@ module JpvmModule =
 
         let packageName = jdk.distro + "-" + jdk.version
         let packageDirPath = [| parentDir; packageName |] |> Path.Combine
-        ZipFile.ExtractToDirectory(packagePath, packageDirPath)
-        ([| packageDirPath; "bin" |] |> Path.Combine, packageName)
+        DeCompressFile(packagePath, packageDirPath)
+
+        let binPath =
+            WalkDir(packageDirPath).Keys
+            |> Seq.toList
+            |> List.tryFind (fun k -> k.EndsWith("bin"))
+            |> fun s ->
+                match s with
+                | Some(s) -> s
+                | None -> "not found"
+
+        if not (binPath = "not found") then
+            let (binPathParent, _) = SplitFile(binPath)
+            (binPathParent, packageName)
+        else
+            (null, null)
 
     let Current () =
         CheckJpvmHome()
@@ -98,8 +110,9 @@ module JpvmModule =
             DownloadCache(jdk, File.ReadAllText(VERSION_PATH) |> JObject.Parse, progress)
 
         let dirPath =
-            [| JDK_PATH; jdk.distro; jdk.version; SysOS; SysArch |]
+            [| JDK_PATH; jdk.distro; jdk.version; SysOS; SysArch; packageName |]
             |> Path.Combine
             |> CreateDirectory
 
-        Directory.Move(pDir, [| dirPath; packageName |] |> Path.Combine)
+        if not (pDir = null) then
+            Directory.Move(pDir, dirPath)

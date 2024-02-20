@@ -1,5 +1,7 @@
 module Tests
 
+open System
+open System.Collections.Generic
 open Xunit
 open ProxyTool.Services
 open ProxyTool.Services.JpvmModule
@@ -14,6 +16,7 @@ let ``Jpvm Current Test`` () =
 
 [<Fact>]
 let ``Jpvm Clean Test`` () =
+    Clean()
     Assert.True(DirectoryIsEmpty(CACHE_PATH))
 
 [<Fact>]
@@ -46,3 +49,8 @@ let ``SysArch Test`` () = Assert.True(string (SysArch) = "amd64")
 
 [<Fact>]
 let ``SysOS Test`` () = Assert.True(string (SysOS) = "windows")
+
+let ``WalkDir Test`` () =
+    let dict = WalkDir(JDK_PATH)
+    dict.Keys |> Seq.toList |> List.iter (fun k -> Console.WriteLine(k + " " + dict[k]))
+    Assert.True(true)
