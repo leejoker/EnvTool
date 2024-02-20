@@ -1,7 +1,6 @@
 module Tests
 
 open System
-open System.Collections.Generic
 open Xunit
 open ProxyTool.Services
 open ProxyTool.Services.JpvmModule
@@ -52,5 +51,9 @@ let ``SysOS Test`` () = Assert.True(string (SysOS) = "windows")
 
 let ``WalkDir Test`` () =
     let dict = WalkDir(JDK_PATH)
-    dict.Keys |> Seq.toList |> List.iter (fun k -> Console.WriteLine(k + " " + dict[k]))
+
+    dict.Keys
+    |> Seq.toList
+    |> List.iter (fun k -> Console.WriteLine(k + " " + dict[k]))
+
     Assert.True(true)
