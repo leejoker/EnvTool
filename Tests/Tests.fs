@@ -23,8 +23,8 @@ let ``Jpvm Clean Test`` () =
 let ``Jpvm Remove Test`` () =
     let result =
         Remove(
-            { JdkVersionInfo.distro = "dragonwell"
-              JdkVersionInfo.version = "11" }
+            { JdkVersionInfo.distro = "openjdk"
+              JdkVersionInfo.version = "21" }
         )
 
     Assert.True(result)
