@@ -122,3 +122,15 @@ module JpvmModule =
                 CleanFile(dirPath)
 
             Directory.Move(pDir, dirPath)
+
+    let Use (jdk: JdkVersionInfo) =
+        let packagePath =
+            [| JDK_PATH
+               jdk.distro
+               jdk.version
+               SysOS
+               SysArch
+               jdk.distro + "-" + jdk.version |]
+            |> Path.Combine
+
+        if Directory.Exists(packagePath) then true else false
