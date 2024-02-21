@@ -42,6 +42,10 @@ module JpvmModule =
     let DownloadCache (jdk: JdkVersionInfo, json: JObject, progress: IProgress<double>) =
         let cachePath = [| JDK_CACHE_PATH; jdk.distro |] |> Path.Combine |> CreateDirectory
         let url = json[jdk.distro][jdk.version][SysOS][SysArch]
+
+        if url.Type = JTokenType.Null then
+            raise (Exception("version not found"))
+
         let pathList = url.ToString().Split("/") |> Array.toList
         let packagePath = [| cachePath; pathList[pathList.Length - 1] |] |> Path.Combine
         let (parentDir, _) = SplitFile(packagePath)
@@ -61,13 +65,10 @@ module JpvmModule =
             |> fun s ->
                 match s with
                 | Some(s) -> s
-                | None -> "not found"
+                | None -> raise (Exception("JDK bin path not found"))
 
-        if not (binPath = "not found") then
-            let (binPathParent, _) = SplitFile(binPath)
-            (binPathParent, packageName)
-        else
-            (null, null)
+        let (binPathParent, _) = SplitFile(binPath)
+        (binPathParent, packageName)
 
     let Current () =
         CheckJpvmHome()
@@ -106,6 +107,8 @@ module JpvmModule =
     let Install (jdk: JdkVersionInfo, progress: IProgress<double>) =
         DownloadVersionList(null)
 
+        CleanDir([| JDK_CACHE_PATH; jdk.distro |] |> Path.Combine)
+
         let (pDir, packageName) =
             DownloadCache(jdk, File.ReadAllText(VERSION_PATH) |> JObject.Parse, progress)
 
@@ -115,4 +118,7 @@ module JpvmModule =
             |> CreateDirectory
 
         if not (pDir = null) then
+            if Directory.Exists(dirPath) then
+                CleanFile(dirPath)
+
             Directory.Move(pDir, dirPath)

@@ -58,7 +58,11 @@ module FileUtils =
                     s.Substring(0, s.LastIndexOf("."))
 
         let dir = array[0 .. array.Length - 2] |> Path.Combine
+#if Windows
+        (dir, fileName)
+#else
         ("/" + dir, fileName)
+#endif
 
     let rec CreateDirectory (path: string) =
         InnerCreateDirectory(path)
@@ -83,6 +87,12 @@ module FileUtils =
             Directory.Delete(path)
         | _ when Directory.Exists(path) && DirectoryIsEmpty(path) -> path |> Directory.Delete
         | _ -> ()
+
+    let CleanDir (path: string) =
+        if Directory.Exists(path) then
+            Directory.EnumerateDirectories(path) |> Seq.toList |> List.iter CleanFile
+        else
+            ()
 
     let DownloadFileTask (url: string, path: string, progress: IProgress<double>) =
         async {
