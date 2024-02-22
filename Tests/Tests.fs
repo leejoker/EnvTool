@@ -1,6 +1,5 @@
 module Tests
 
-open System
 open Xunit
 open ProxyTool.Services
 open ProxyTool.Services.JpvmModule
@@ -51,9 +50,11 @@ let ``SysOS Test`` () = Assert.True(string (SysOS) = "windows")
 
 let ``WalkDir Test`` () =
     let dict = WalkDir(JDK_PATH)
+    dict.Keys |> Seq.toList |> List.iter (fun k -> printfn $"%s{k} %s{dict[k]}")
 
-    dict.Keys
-    |> Seq.toList
-    |> List.iter (fun k -> Console.WriteLine(k + " " + dict[k]))
+let ``GetEnvironment Test`` () =
+    let javaHome = GetEnviromnent("JAVA_HOME")
 
-    Assert.True(true)
+    match javaHome with
+    | Some(javaHome) -> printfn $"{javaHome}"
+    | None -> printfn "not found"

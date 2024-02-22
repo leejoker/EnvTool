@@ -11,7 +11,7 @@ type ViewLocator() =
             data.GetType().FullName
             |> fun x ->
                 match x with
-                | _ when not (x = null) ->
+                | _ when x <> null ->
                     x.Replace("ViewModel", "View")
                     |> Type.GetType
                     |> Activator.CreateInstance

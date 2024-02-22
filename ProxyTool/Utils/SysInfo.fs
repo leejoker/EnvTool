@@ -26,14 +26,14 @@ module SysInfo =
     [<DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)>]
     extern bool SetEnvironmentVariable(string lpName, string lpValue)
     [<DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)>]
-    extern IntPtr GetEnvironmentVariable(string lpName, System.Text.StringBuilder lpBuffer, int nSize)
+    extern IntPtr GetEnvironmentVariable(string lpName, Text.StringBuilder lpBuffer, int nSize)
 #endif
 
     let GetEnviromnent name =
 #if Windows
-        let mutable buffer = System.Text.StringBuilder(255)
+        let mutable buffer = Text.StringBuilder(10240)
         let length = GetEnvironmentVariable(name, buffer, buffer.Capacity)
-        if length <> System.IntPtr.Zero then
+        if length <> IntPtr.Zero then
                 Some (buffer.ToString())
         else
                 None
@@ -55,3 +55,24 @@ module SysInfo =
 #if OSX
         false
 #endif
+
+    let AddPathValue(value: string, origin: string) =
+#if Windows
+        let originPath = GetEnviromnent("PATH")
+        match originPath with
+        |Some(originPath) ->
+                if origin = null then
+                    SetSystemEnviromentVariable "PATH" $"{value};{originPath}"
+                else
+                    //TODO
+                    false
+        | None -> false
+#endif
+
+#if Linux
+        false
+#endif
+
+#if OSX
+        false
+#endif      

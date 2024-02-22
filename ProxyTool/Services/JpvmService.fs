@@ -30,16 +30,10 @@ module JpvmModule =
 
     let VERSION_URL = "https://gitee.com/monkeyNaive/jpvm/raw/master/versions.json"
 
-    let CheckJpvmHome () = CreateDirectory(JPVM_HOME) |> ignore
+    //------------------------- private functions ---------------------------------------------
+    let private CheckJpvmHome () = CreateDirectory(JPVM_HOME) |> ignore
 
-    let rec DownloadVersionList (progress: IProgress<double>) =
-        if Directory.Exists(JDK_PATH) then
-            DownloadFileTask(VERSION_URL, VERSION_PATH, progress) |> Async.RunSynchronously
-        else
-            CreateDirectory(JDK_PATH) |> ignore
-            DownloadVersionList(progress)
-
-    let DownloadCache (jdk: JdkVersionInfo, json: JObject, progress: IProgress<double>) =
+    let private DownloadCache (jdk: JdkVersionInfo, json: JObject, progress: IProgress<double>) =
         let cachePath = [| JDK_CACHE_PATH; jdk.distro |] |> Path.Combine |> CreateDirectory
         let url = json[jdk.distro][jdk.version][SysOS][SysArch]
 
@@ -69,6 +63,29 @@ module JpvmModule =
 
         let (binPathParent, _) = SplitFile(binPath)
         (binPathParent, packageName)
+
+    let private SetJavaEnvironment (javaHome: string) =
+        let originJavaHome = GetEnviromnent("JAVA_HOME")
+        let result = SetEnvironmentVariable("JAVA_HOME", javaHome)
+
+        match originJavaHome with
+        | Some(originJavaHome) ->
+            //TODO let path = GetEnviromnent("PATH")
+            false
+        | None ->
+            if result then
+                AddPathValue(javaHome, null)
+            else
+                raise (Exception("Set JAVA_HOME Failed"))
+
+
+    //------------------------- public functions ---------------------------------------------
+    let rec DownloadVersionList (progress: IProgress<double>) =
+        if Directory.Exists(JDK_PATH) then
+            DownloadFileTask(VERSION_URL, VERSION_PATH, progress) |> Async.RunSynchronously
+        else
+            CreateDirectory(JDK_PATH) |> ignore
+            DownloadVersionList(progress)
 
     let Current () =
         CheckJpvmHome()
@@ -117,7 +134,7 @@ module JpvmModule =
             |> Path.Combine
             |> CreateDirectory
 
-        if not (pDir = null) then
+        if pDir <> null then
             if Directory.Exists(dirPath) then
                 CleanFile(dirPath)
 

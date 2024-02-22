@@ -18,7 +18,7 @@ module FileUtils =
         else
             dict.Add(path, "d")
 
-            if not (Directory.GetFileSystemEntries(path).Length = 0) then
+            if Directory.GetFileSystemEntries(path).Length <> 0 then
                 let fileList = Directory.EnumerateFileSystemEntries(path) |> Seq.toList
 
                 for f in fileList do
@@ -130,6 +130,6 @@ module FileUtils =
                     bytesSoFar <- bytesSoFar + int64 bytesRead
 
                     match progress with
-                    | _ when not (progress = null) -> progress.Report((float bytesSoFar / float totalBytes) * 100.0)
+                    | _ when progress <> null -> progress.Report((float bytesSoFar / float totalBytes) * 100.0)
                     | _ -> ()
         }
