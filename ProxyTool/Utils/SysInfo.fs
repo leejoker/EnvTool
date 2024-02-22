@@ -43,20 +43,14 @@ module SysInfo =
         | value -> Some value
 #endif
 
-    let SetSystemEnviromentVariable name value =
+    let SetSystemEnvironmentVariable name value =
 #if Windows
         SetEnvironmentVariable(name, value)
-#endif
-
-#if Linux
+#else 
         false
 #endif
 
-#if OSX
-        false
-#endif
-
-    let AddPathValue(value: string, origin: string) =
+    let AddPathValue value origin =
 #if Windows
         let originPath = GetEnviromnent("PATH")
         match originPath with
@@ -67,12 +61,6 @@ module SysInfo =
                     //TODO
                     false
         | None -> false
-#endif
-
-#if Linux
-        false
-#endif
-
-#if OSX
+#else
         false
 #endif      

@@ -65,8 +65,8 @@ module JpvmModule =
         (binPathParent, packageName)
 
     let private SetJavaEnvironment (javaHome: string) =
-        let originJavaHome = GetEnviromnent("JAVA_HOME")
-        let result = SetEnvironmentVariable("JAVA_HOME", javaHome)
+        let originJavaHome = GetEnviromnent "JAVA_HOME"
+        let result = SetSystemEnvironmentVariable "JAVA_HOME" javaHome
 
         match originJavaHome with
         | Some(originJavaHome) ->
@@ -74,7 +74,7 @@ module JpvmModule =
             false
         | None ->
             if result then
-                AddPathValue(javaHome, null)
+                AddPathValue javaHome null
             else
                 raise (Exception("Set JAVA_HOME Failed"))
 
