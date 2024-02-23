@@ -7,9 +7,29 @@ open ProxyTool.Utils.FileUtils
 open ProxyTool.Utils.SysInfo
 
 [<Fact>]
+let ``Jpvm Install Test`` () =
+    Install(
+        { JdkVersionInfo.distro = "openjdk"
+          JdkVersionInfo.version = "21" },
+        null
+    )
+
+    Assert.True(true)
+
+[<Fact>]
+let ``Jpvm Use Test`` () =
+    let result =
+        Use(
+            { JdkVersionInfo.distro = "openjdk"
+              JdkVersionInfo.version = "21" }
+        )
+
+    Assert.True(result)
+
+[<Fact>]
 let ``Jpvm Current Test`` () =
     let result = Current()
-    Assert.True(result.distro = "zulu")
+    Assert.True(result.distro = "openjdk" && result.version = "21")
 
 
 [<Fact>]
@@ -28,16 +48,6 @@ let ``Jpvm Remove Test`` () =
     Assert.True(result)
 
 [<Fact>]
-let ``Jpvm Install Test`` () =
-    Install(
-        { JdkVersionInfo.distro = "openjdk"
-          JdkVersionInfo.version = "21" },
-        null
-    )
-
-    Assert.True(true)
-
-[<Fact>]
 let ``DownloadVersionList Test`` () =
     DownloadVersionList(null)
     Assert.True(true)
@@ -53,7 +63,7 @@ let ``WalkDir Test`` () =
     dict.Keys |> Seq.toList |> List.iter (fun k -> printfn $"%s{k} %s{dict[k]}")
 
 let ``GetEnvironment Test`` () =
-    let javaHome = GetEnviromnent("JAVA_HOME")
+    let javaHome = GetEnvironment("JAVA_HOME")
 
     match javaHome with
     | Some(javaHome) -> printfn $"{javaHome}"

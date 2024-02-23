@@ -65,19 +65,15 @@ module JpvmModule =
         (binPathParent, packageName)
 
     let private SetJavaEnvironment (javaHome: string) =
-        let originJavaHome = GetEnviromnent "JAVA_HOME"
-        let result = SetSystemEnvironmentVariable "JAVA_HOME" javaHome
+        let originJavaHome = GetEnvironment "JAVA_HOME"
+        let result = SetUserEnvironmentVariable "JAVA_HOME" javaHome
 
-        match originJavaHome with
-        | Some(originJavaHome) ->
-            //TODO let path = GetEnviromnent("PATH")
-            false
-        | None ->
-            if result then
-                AddPathValue javaHome null
-            else
-                raise (Exception("Set JAVA_HOME Failed"))
-
+        if result then
+            match originJavaHome with
+            | Some(originJavaHome) -> AddPathValue javaHome originJavaHome
+            | None -> AddPathValue javaHome null
+        else
+            raise (Exception("Set JAVA_HOME Failed"))
 
     //------------------------- public functions ---------------------------------------------
     let rec DownloadVersionList (progress: IProgress<double>) =
@@ -150,4 +146,8 @@ module JpvmModule =
                jdk.distro + "-" + jdk.version |]
             |> Path.Combine
 
-        if Directory.Exists(packagePath) then true else false
+        if Directory.Exists(packagePath) && SetJavaEnvironment packagePath then
+            File.WriteAllText(CUR_VERSION, $"{jdk.distro} {jdk.version}")
+            true
+        else
+            false

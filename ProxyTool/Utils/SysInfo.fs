@@ -1,7 +1,9 @@
 ﻿namespace ProxyTool.Utils
 
+open System.IO
 open System.Runtime.InteropServices
 open System
+open Microsoft.Win32
 
 module SysInfo =
     let SysArch = (fun () ->
@@ -22,44 +24,31 @@ module SysInfo =
         "macos"
 #endif
 
+    let SetUserEnvironmentVariable name value =
 #if Windows
-    [<DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)>]
-    extern bool SetEnvironmentVariable(string lpName, string lpValue)
-    [<DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)>]
-    extern IntPtr GetEnvironmentVariable(string lpName, Text.StringBuilder lpBuffer, int nSize)
-#endif
-
-    let GetEnviromnent name =
-#if Windows
-        let mutable buffer = Text.StringBuilder(10240)
-        let length = GetEnvironmentVariable(name, buffer, buffer.Capacity)
-        if length <> IntPtr.Zero then
-                Some (buffer.ToString())
-        else
-                None
-#else
-        match Environment.GetEnvironmentVariable(name) with
-        | null -> None
-        | value -> Some value
-#endif
-
-    let SetSystemEnvironmentVariable name value =
-#if Windows
-        SetEnvironmentVariable(name, value)
+        Registry.CurrentUser |> _.OpenSubKey("Environment", true) |> _.SetValue(name, value)
+        true
 #else 
         false
 #endif
 
+    let GetEnvironment name =
+        match Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.User) with
+        | null -> None
+        | value -> Some value
+
     let AddPathValue value origin =
 #if Windows
-        let originPath = GetEnviromnent("PATH")
+        let originPath = GetEnvironment("PATH")
         match originPath with
         |Some(originPath) ->
-                if origin = null then
-                    SetSystemEnvironmentVariable "PATH" $"{value};{originPath}"
-                else
-                    //TODO
-                    false
+                let o = ref originPath
+                if origin <> null then
+                       if o.Value.StartsWith origin then
+                           o.Value <- (o.Value).Replace($"{origin};","")
+                       else
+                           o.Value <- (o.Value).Replace($";{origin}","")
+                SetUserEnvironmentVariable "PATH" $"{value}{Path.DirectorySeparatorChar}bin;{o.Value}"
         | None -> false
 #else
         false
