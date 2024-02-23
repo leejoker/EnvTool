@@ -56,7 +56,7 @@ module SysInfo =
         match originPath with
         |Some(originPath) ->
                 if origin = null then
-                    SetSystemEnviromentVariable "PATH" $"{value};{originPath}"
+                    SetSystemEnvironmentVariable "PATH" $"{value};{originPath}"
                 else
                     //TODO
                     false
