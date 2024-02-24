@@ -43,6 +43,8 @@ module SysInfo =
         Registry.CurrentUser |> _.OpenSubKey("Environment", true) |> _.SetValue(name, value)
         true
 #else 
+        let profile = GetUserProfile
+        //TODO
         false
 #endif
 
@@ -59,11 +61,21 @@ module SysInfo =
                 let o = ref originPath
                 if origin <> null then
                        if o.Value.StartsWith origin then
-                           o.Value <- (o.Value).Replace($"{origin};","")
+                           o.Value <- (o.Value).Replace($"{origin}{Path.DirectorySeparatorChar}bin;","")
                        else
-                           o.Value <- (o.Value).Replace($";{origin}","")
+                           o.Value <- (o.Value).Replace($";{origin}{Path.DirectorySeparatorChar}bin","")
                 SetUserEnvironmentVariable "PATH" $"{value}{Path.DirectorySeparatorChar}bin;{o.Value}"
-        | None -> false
+        | None -> SetUserEnvironmentVariable "PATH" $"{value}{Path.DirectorySeparatorChar}bin"
 #else
-        false
+        let originPath = GetEnvironment("PATH")
+        match originPath with
+        |Some(originPath) ->
+                let o = ref originPath
+                if origin <> null then
+                       if o.Value.StartsWith origin then
+                           o.Value <- (o.Value).Replace($"{origin}{Path.DirectorySeparatorChar}bin:","")
+                       else
+                           o.Value <- (o.Value).Replace($":{origin}{Path.DirectorySeparatorChar}bin","")
+                SetUserEnvironmentVariable "PATH" $"{value}{Path.DirectorySeparatorChar}bin:{o.Value}"
+        | None -> SetUserEnvironmentVariable "PATH" $"{value}{Path.DirectorySeparatorChar}bin:$PATH"
 #endif      
