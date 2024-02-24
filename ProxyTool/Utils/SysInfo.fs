@@ -3,7 +3,6 @@
 open System.IO
 open System.Runtime.InteropServices
 open System
-open Microsoft.Win32
 
 module SysInfo =
     let SysArch = (fun () ->
@@ -22,6 +21,21 @@ module SysInfo =
 
 #if OSX
         "macos"
+#endif
+
+#if Linux || OSX
+    let GetUserProfile =
+        let bashProfile = ".bash_profile"
+        let bashrc = ".bashrc"
+        let zshrc = ".zshrc"
+        let home = Environment.GetEnvironmentVariable("HOME")
+        
+        if File.Exists $"{home}{Path.DirectorySeparatorChar}{zshrc}" then
+            $"{home}{Path.DirectorySeparatorChar}{zshrc}"
+        else if File.Exists $"{home}{Path.DirectorySeparatorChar}{bashrc}" then
+            $"{home}{Path.DirectorySeparatorChar}{bashrc}"
+        else
+            $"{home}{Path.DirectorySeparatorChar}{bashProfile}"
 #endif
 
     let SetUserEnvironmentVariable name value =
