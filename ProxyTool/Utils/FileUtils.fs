@@ -10,6 +10,8 @@ open System.Threading
 open ICSharpCode.SharpZipLib.GZip
 open ICSharpCode.SharpZipLib.Tar
 
+open ProxyTool.Utils.CmdUtils
+
 module FileUtils =
     //------------------------------ private functions -----------------------------------------
     let rec private InnerWalkDir (path: string) (dict: byref<Dictionary<string, string>>) =
@@ -30,8 +32,8 @@ module FileUtils =
         if not dir.Exists then
             if not dir.Parent.Exists then
                 InnerCreateDirectory(dir.Parent.FullName)
-            else
-                dir.Create()
+
+            dir.Create()
         else
             ()
     //------------------------------ public functions -------------------------------------------
@@ -133,3 +135,5 @@ module FileUtils =
                     | _ when progress <> null -> progress.Report((float bytesSoFar / float totalBytes) * 100.0)
                     | _ -> ()
         }
+
+    let RunnableAccess path = RunCmdCommand $"chmod +x {path}/*"

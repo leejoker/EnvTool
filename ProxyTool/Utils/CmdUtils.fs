@@ -1,8 +1,7 @@
-﻿namespace ProxyTool.ViewModels.Utils
+﻿namespace ProxyTool.Utils
 
 open System.Diagnostics
 open System
-open System.Runtime.InteropServices
 
 module CmdUtils =
     let private SetProcessInfo (p: Process) =

@@ -34,7 +34,8 @@ module JpvmModule =
     let private CheckJpvmHome () = CreateDirectory(JPVM_HOME) |> ignore
 
     let private DownloadCache (jdk: JdkVersionInfo, json: JObject, progress: IProgress<double>) =
-        let cachePath = [| JDK_CACHE_PATH; jdk.distro |] |> Path.Combine |> CreateDirectory
+        let cachePath = [| JDK_CACHE_PATH; jdk.distro |] |> Path.Combine
+        let cachePath = CreateDirectory cachePath
         let url = json[jdk.distro][jdk.version][SysOS][SysArch]
 
         if url.Type = JTokenType.Null then
@@ -130,7 +131,7 @@ module JpvmModule =
             |> Path.Combine
             |> CreateDirectory
 
-        if pDir <> null then
+        if pDir <> null && Directory.Exists pDir then
             if Directory.Exists(dirPath) then
                 CleanFile(dirPath)
 
@@ -147,6 +148,9 @@ module JpvmModule =
             |> Path.Combine
 
         if Directory.Exists(packagePath) && SetJavaEnvironment packagePath then
+#if Linux || OSX
+            [| packagePath; "bin" |] |> Path.Combine |> RunnableAccess |> ignore
+#endif
             File.WriteAllText(CUR_VERSION, $"{jdk.distro} {jdk.version}")
             true
         else

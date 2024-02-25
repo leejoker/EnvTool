@@ -1,9 +1,7 @@
 ﻿namespace ProxyTool.ViewModels
 
-open ProxyTool.ViewModels.Utils.CmdUtils
-open ProxyTool.ViewModels.Utils.MessageBoxUtils
+open ProxyTool.Utils.CmdUtils
 open ProxyTool.DataModels
-open System
 
 type MainViewModel(proxy: ProxyConfigModel) as this =
     inherit ViewModelBase()
