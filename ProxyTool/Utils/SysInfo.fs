@@ -3,6 +3,7 @@
 open System.IO
 open System.Runtime.InteropServices
 open System
+open Microsoft.Win32
 
 module SysInfo =
     let SysArch = (fun () ->
