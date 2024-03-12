@@ -11,7 +11,7 @@ module SysInfo =
                         if arch = "arm64" then "aarch64"
                         else if arch = "x64" then "amd64"
                         else arch)()
-    let SysOS = 
+    let SysOS =
 #if Windows
         "windows"
 #endif
@@ -30,7 +30,7 @@ module SysInfo =
         let bashrc = ".bashrc"
         let zshrc = ".zshrc"
         let home = Environment.GetEnvironmentVariable("HOME")
-        
+
         if File.Exists $"{home}{Path.DirectorySeparatorChar}{zshrc}" then
             $"{home}{Path.DirectorySeparatorChar}{zshrc}"
         else if File.Exists $"{home}{Path.DirectorySeparatorChar}{bashrc}" then
@@ -43,7 +43,7 @@ module SysInfo =
 #if Windows
         Registry.CurrentUser |> _.OpenSubKey("Environment", true) |> _.SetValue(name, value)
         true
-#else 
+#else
         let profile = GetUserProfile
         let lines = ref (File.ReadAllLines profile)
         lines.Value |> Array.tryFindIndex (_.StartsWith($"export {name}"))
@@ -82,7 +82,7 @@ module SysInfo =
                        else
                            o.Value <- (o.Value).Replace($";{origin}{Path.DirectorySeparatorChar}bin","")
                 SetUserEnvironmentVariable "PATH" $"{value}{Path.DirectorySeparatorChar}bin;{o.Value}"
-        | None -> SetUserEnvironmentVariable "PATH" $"{value}{Path.DirectorySeparatorChar}bin"
+        | None -> SetUserEnvironmentVariable "PATH" $"{value}{Path. DirectorySeparatorChar}bin"
 #else
         let originPath = GetEnvironment("PATH")
         match originPath with
@@ -95,4 +95,4 @@ module SysInfo =
                            o.Value <- (o.Value).Replace($":{origin}{Path.DirectorySeparatorChar}bin","")
                 SetUserEnvironmentVariable "PATH" $"{value}{Path.DirectorySeparatorChar}bin:{o.Value}"
         | None -> SetUserEnvironmentVariable "PATH" $"{value}{Path.DirectorySeparatorChar}bin:$PATH"
-#endif      
+#endif
