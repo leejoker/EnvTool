@@ -1,14 +1,12 @@
 ﻿namespace ProxyTool.ViewModels
 
 open ProxyTool.Utils.CmdUtils
-open ProxyTool.DataModels
 
-type MainViewModel(proxy: ProxyConfigModel) as this =
+type MainViewModel() as this =
     inherit ViewModelBase()
 
-    let _proxy = proxy
-    let mutable host = _proxy.Host
-    let mutable port = _proxy.Port
+    let mutable host = Unchecked.defaultof<string>
+    let mutable port = Unchecked.defaultof<int>
     let mutable gitProxyEnabled = false
 
     do this.CheckSysGitSatus()

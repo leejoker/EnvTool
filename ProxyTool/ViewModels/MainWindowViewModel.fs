@@ -17,9 +17,19 @@ type MainWindowViewModel() as this =
 
     let proxyConfigService = ProxyConfigService()
 
+    let mainView = MainViewModel()
+
     do this.ProxyConfigModel <- proxyConfigService.LoadConfig()
 
-    do this.ContentViewModel <- new MainViewModel(this.ProxyConfigModel)
+    do mainView.Host <- proxyConfigModel.Host
+    do mainView.Port <- proxyConfigModel.Port
+    do this.ContentViewModel <- mainView
+
+    member private this.CreateMainViewModel (host: string) (port: int) : MainViewModel =
+        let mainViewModel = MainViewModel()
+        mainViewModel.Host <- host
+        mainViewModel.Port <- port
+        mainViewModel
 
     member this.ProxyConfigModel
         with get () = proxyConfigModel
@@ -30,10 +40,10 @@ type MainWindowViewModel() as this =
         and private set (value: ViewModelBase) = this.RaiseAndSetIfChanged(&contentViewModel, value) |> ignore
 
     member this.ProxyConfig() =
-        let proxyConfigModel = new ProxyConfigViewModel(this.ProxyConfigModel)
+        let proxyConfigModel = ProxyConfigViewModel(this.ProxyConfigModel)
 
         proxyConfigModel.BackCommand.Subscribe(fun _ ->
-            _mainViewModel <- new MainViewModel(this.ProxyConfigModel)
+            _mainViewModel <- this.CreateMainViewModel proxyConfigModel.Host proxyConfigModel.Port
             this.ContentViewModel <- _mainViewModel)
         |> ignore
 
@@ -41,7 +51,7 @@ type MainWindowViewModel() as this =
             this.ProxyConfigModel <- ProxyConfigModel(p.Host, p.Port)
             proxyConfigService.SaveConfig(this.ProxyConfigModel)
             CreateTipBox "保存成功" |> ignore
-            _mainViewModel <- new MainViewModel(this.ProxyConfigModel)
+            _mainViewModel <- this.CreateMainViewModel proxyConfigModel.Host proxyConfigModel.Port
             this.ContentViewModel <- _mainViewModel)
         |> ignore
 
