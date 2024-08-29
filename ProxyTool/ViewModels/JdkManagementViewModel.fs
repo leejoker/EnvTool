@@ -1,5 +1,5 @@
 ﻿namespace ProxyTool.ViewModels
 
 
-type JdkManagementViewModel() as this =
+type JdkManagementViewModel() =
     inherit ViewModelBase()

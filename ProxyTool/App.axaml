@@ -4,6 +4,12 @@
              RequestedThemeVariant="Light"
              xmlns:local="clr-namespace:ProxyTool">
 
+    <TrayIcon.Icons>
+        <TrayIcons>
+            <TrayIcon Icon="/Assets/logo.ico" Clicked="ShowOrHide"/>
+        </TrayIcons>
+    </TrayIcon.Icons>
+
     <Application.DataTemplates>
         <local:ViewLocator />
     </Application.DataTemplates>
