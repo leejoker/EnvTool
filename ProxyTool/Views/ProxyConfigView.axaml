@@ -85,7 +85,7 @@
       </TabItem>
       <TabItem Header="Java">
         <StackPanel Classes="body">
-          <Button Content="JDK Management" Classes="bar"/>
+          <Button Content="JDK Management" Classes="bar" Click="OpenJdkMgmtWin"/>
           <Button Content="Maven Management" Classes="bar"/>
         </StackPanel>
       </TabItem>

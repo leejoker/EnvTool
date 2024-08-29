@@ -32,13 +32,20 @@
     <Compile Include="Services\JpvmService.fs" />
     <Compile Include="ViewModels\Utils\MessageBoxUtils.fs" />
     <Compile Include="ViewModels\ViewModelBase.fs" />
+    <Compile Include="ViewModels\JdkManagementViewModel.fs" />
     <Compile Include="ViewModels\MainViewModel.fs" />
     <Compile Include="ViewModels\ProxyConfigViewModel.fs" />
     <Compile Include="ViewModels\MainWindowViewModel.fs" />
+    <Compile Include="ViewModels\JavaConfigWindowViewModel.fs" />
+    <Compile Include="ViewLocator.fs" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Include="Views\JdkManagementView.axaml.fs" />
+    <Compile Include="Views\JdkManagementWindow.axaml.fs" />
     <Compile Include="Views\ProxyConfigView.axaml.fs" />
     <Compile Include="Views\MainView.axaml.fs" />
     <Compile Include="Views\MainWindow.axaml.fs" />
-    <Compile Include="ViewLocator.fs" />
     <Compile Include="App.axaml.fs" />
   </ItemGroup>
 
