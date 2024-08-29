@@ -63,14 +63,7 @@
       <Button Classes="config" x:CompileBindings="False" Command="{Binding $parent[Window].DataContext.ProxyConfig}">Config</Button>
     </DockPanel>
     <Separator Classes="sep"/>
-    <Grid Classes="body">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="100"/>
-        <ColumnDefinition Width="200"/>
-      </Grid.ColumnDefinitions>
-      <Grid.RowDefinitions>
-        <RowDefinition Height="50"/>
-      </Grid.RowDefinitions>
+    <Grid Classes="body" ColumnDefinitions="100,200" RowDefinitions="50">
       <TextBlock Grid.Row="0" Grid.Column="0">设置 Git 代理 </TextBlock>
       <ToggleSwitch Grid.Row="0" Grid.Column="1" OffContent="" OnContent="" Command="{Binding HandleGitProxy}" IsChecked="{Binding GitProxyEnabled}"/>
     </Grid>

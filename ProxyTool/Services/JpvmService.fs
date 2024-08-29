@@ -36,7 +36,7 @@ module JpvmModule =
     let private DownloadCache (jdk: JdkVersionInfo, json: JObject, progress: IProgress<double>) =
         let cachePath = [| JDK_CACHE_PATH; jdk.distro |] |> Path.Combine
         let cachePath = CreateDirectory cachePath
-        let url = json[jdk.distro][jdk.version][SysOS][SysArch]
+        let url = json[jdk.distro].[jdk.version].[SysOS].[SysArch]
 
         if url.Type = JTokenType.Null then
             raise (Exception("version not found"))
