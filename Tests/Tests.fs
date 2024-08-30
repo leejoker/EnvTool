@@ -4,6 +4,7 @@ open Xunit
 open ProxyTool.Services
 open ProxyTool.Services.JpvmModule
 open ProxyTool.Utils.FileUtils
+open ProxyTool.Utils.ProxyUtils
 open ProxyTool.Utils.SysInfo
 
 [<Fact>]
@@ -68,3 +69,6 @@ let ``GetEnvironment Test`` () =
     match javaHome with
     | Some(javaHome) -> printfn $"{javaHome}"
     | None -> printfn "not found"
+
+[<Fact>]
+let ``SystemProxyStatus Test`` () = Assert.True(SystemProxyStatus() = false)

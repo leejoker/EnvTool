@@ -30,6 +30,7 @@
         <Compile Include="Utils\CmdUtils.fs"/>
         <Compile Include="Utils\SysInfo.fs"/>
         <Compile Include="Utils\FileUtils.fs"/>
+        <Compile Include="Utils\ProxyUtils.fs" />
         <Compile Include="Services\ProxyConfigService.fs"/>
         <Compile Include="Services\JpvmService.fs"/>
         <Compile Include="ViewModels\Utils\MessageBoxUtils.fs"/>

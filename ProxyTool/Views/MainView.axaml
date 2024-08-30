@@ -53,6 +53,8 @@
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="Margin" Value="20 0 0 0" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="FontFamily" Value="微软雅黑" />
         </Style>
         <Style Selector="Grid.body ToggleSwitch">
             <Setter Property="VerticalAlignment" Value="Center" />
@@ -66,9 +68,12 @@
             <Button Classes="config" Command="{Binding $parent[Window].DataContext.ProxyConfig}">Config</Button>
         </DockPanel>
         <Separator Classes="sep" />
-        <Grid Classes="body" ColumnDefinitions="100,200" RowDefinitions="50">
-            <TextBlock Grid.Row="0" Grid.Column="0">设置 Git 代理 </TextBlock>
-            <ToggleSwitch Grid.Row="0" Grid.Column="1" OffContent="" OnContent="" Command="{Binding HandleGitProxy}"
+        <Grid Classes="body" ColumnDefinitions="100,200" RowDefinitions="50,50">
+            <TextBlock Grid.Row="0" Grid.Column="0"> 系统代理 </TextBlock>
+            <ToggleSwitch Grid.Row="0" Grid.Column="1" OffContent="" OnContent="" Command="{Binding HandleSystemProxy}"
+                          IsChecked="{Binding SystemProxyEnabled}" />
+            <TextBlock Grid.Row="1" Grid.Column="0"> Git 代理 </TextBlock>
+            <ToggleSwitch Grid.Row="1" Grid.Column="1" OffContent="" OnContent="" Command="{Binding HandleGitProxy}"
                           IsChecked="{Binding GitProxyEnabled}" />
         </Grid>
     </StackPanel>

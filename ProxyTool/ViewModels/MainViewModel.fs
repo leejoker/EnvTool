@@ -1,6 +1,6 @@
 ﻿namespace ProxyTool.ViewModels
 
-open ProxyTool.Utils.CmdUtils
+open ProxyTool.Utils.ProxyUtils
 
 type MainViewModel() as this =
     inherit ViewModelBase()
@@ -8,12 +8,18 @@ type MainViewModel() as this =
     let mutable host = Unchecked.defaultof<string>
     let mutable port = Unchecked.defaultof<int>
     let mutable gitProxyEnabled = false
+    let mutable systemProxyEnabled = false
 
-    do this.CheckSysGitSatus()
+    do systemProxyEnabled <- SystemProxyStatus()
+    do gitProxyEnabled <- GitProxyEnabled()
 
     member this.GitProxyEnabled
         with get () = gitProxyEnabled
         and set v = gitProxyEnabled <- v
+
+    member this.SystemProxyEnabled
+        with get () = systemProxyEnabled
+        and set v = systemProxyEnabled <- v
 
     member this.Host
         with get () = host
@@ -23,18 +29,14 @@ type MainViewModel() as this =
         with get () = port
         and set v = port <- v
 
-    member this.CheckSysGitSatus() =
-        let gitProxy = RunCmdCommand "git config --global --list | findstr proxy"
-        gitProxyEnabled <- (gitProxy.Contains "http.proxy" || gitProxy.Contains "https.proxy")
+    member this.HandleSystemProxy() =
+        if systemProxyEnabled then
+            SetSystemProxy host port
+        else
+            CloseSystemProxy()
 
     member this.HandleGitProxy() =
-        let gitHttpProxy = $"http://{host}:{port}"
-        let gitHttpsProxy = $"https://{host}:{port}"
-
         if gitProxyEnabled then
-            RunCmdCommand
-                $"git config --global http.proxy {gitHttpProxy} && git config --global https.proxy {gitHttpsProxy}"
-            |> ignore
+            SetGitProxy host port
         else
-            RunCmdCommand "git config --global --unset http.proxy && git config --global --unset https.proxy"
-            |> ignore
+            RemoveGitProxy()
