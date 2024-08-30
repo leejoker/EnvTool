@@ -6,7 +6,13 @@
 
     <TrayIcon.Icons>
         <TrayIcons>
-            <TrayIcon Icon="/Assets/logo.ico" Clicked="ShowOrHide"/>
+            <TrayIcon Icon="/Assets/logo.ico" Clicked="ShowOrHide">
+                <TrayIcon.Menu>
+                    <NativeMenu>
+                        <NativeMenuItem Header="Exit ProxyTool" Click="Exit" />
+                    </NativeMenu>
+                </TrayIcon.Menu>
+            </TrayIcon>
         </TrayIcons>
     </TrayIcon.Icons>
 

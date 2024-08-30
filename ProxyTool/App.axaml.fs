@@ -4,7 +4,6 @@ open System
 open Avalonia
 open Avalonia.Controls
 open Avalonia.Controls.ApplicationLifetimes
-open Avalonia.Interactivity
 open Avalonia.Markup.Xaml
 open ProxyTool.ViewModels
 open ProxyTool.Views
@@ -12,9 +11,7 @@ open ProxyTool.Views
 type App() as this =
     inherit Application()
 
-    let mutable showStatus = Unchecked.defaultof<Boolean>
-
-    do this.ShowStatus <- true
+    do MainWindow.HideState <- false
 
     override this.Initialize() = AvaloniaXamlLoader.Load(this)
 
@@ -28,16 +25,20 @@ type App() as this =
 
         base.OnFrameworkInitializationCompleted()
 
-    member this.ShowStatus
-        with get () = showStatus
-        and set v = showStatus <- v
-
     member this.ShowOrHide (sender: obj) (args: EventArgs) =
         let desktop = this.ApplicationLifetime :?> IClassicDesktopStyleApplicationLifetime
 
-        if this.ShowStatus then
+        if not MainWindow.HideState then
             desktop.Windows |> Seq.iter (fun (w: Window) -> w.Hide())
-            this.ShowStatus <- false
+            MainWindow.HideState <- true
         else
-            desktop.Windows |> Seq.iter (fun (w: Window) -> w.Show())
-            this.ShowStatus <- true
+            desktop.Windows
+            |> Seq.iter (fun (w: Window) ->
+                w.Show()
+                w.WindowState <- WindowState.Normal)
+
+            MainWindow.HideState <- false
+
+    member this.Exit (sender: obj) (args: EventArgs) =
+        let desktop = this.ApplicationLifetime :?> IClassicDesktopStyleApplicationLifetime
+        desktop.TryShutdown() |> ignore
