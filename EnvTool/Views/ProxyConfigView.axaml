@@ -1,0 +1,100 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+             x:Class="EnvTool.Views.ProxyConfigView">
+
+  <UserControl.Styles>
+    <Style Selector="Button">
+      <Setter Property="FontFamily" Value="微软雅黑"/>
+      <Setter Property="FontWeight" Value="Bold"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="Button.bar">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="HorizontalAlignment" Value="Center"/>
+      <Setter Property="Width" Value="300"/>
+      <Setter Property="Height" Value="30"/>
+    </Style>
+
+    <Style Selector="DockPanel.header">
+      <Setter Property="Width" Value="300"/>
+      <Setter Property="Height" Value="50"/>
+      <Setter Property="VerticalAlignment" Value="Top"/>
+    </Style>
+    <Style Selector="Button.back">
+      <Setter Property="HorizontalAlignment" Value="Left"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="Margin" Value="5 0 0 0"/>
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="Width" Value="40"/>
+    </Style>
+    <Style Selector="Separator.sep">
+      <Setter Property="Width" Value="300"/>
+      <Setter Property="Margin" Value="0 0 0 10"/>
+    </Style>
+    <Style Selector="Grid.body, StackPanel.body">
+      <Setter Property="Width" Value="300"/>
+      <Setter Property="Height" Value="329"/>
+    </Style>
+    <Style Selector="Grid.body TextBlock">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="HorizontalAlignment" Value="Center"/>
+      <Setter Property="Margin" Value="20 0 0 0"/>
+    </Style>
+    <Style Selector="Grid.body TextBox">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="HorizontalAlignment" Value="Center"/>
+      <Setter Property="Width" Value="200"/>
+      <Setter Property="Margin" Value="20 0 0 0"/>
+    </Style>
+
+    <Style Selector="TabControl">
+      <Setter Property="Margin" Value="0 -20 0 0"/>
+    </Style>
+    <Style Selector="TabControl TabItem">
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="FontFamily" Value="微软雅黑"/>
+      <Setter Property="FontWeight" Value="Bold"/>
+    </Style>
+  </UserControl.Styles>
+
+  <StackPanel>
+    <DockPanel Classes="header">
+      <Button Classes="back" Command="{Binding BackCommand}">&lt;</Button>
+    </DockPanel>
+    <Separator Classes="sep"/>
+    <TabControl>
+      <TabItem Header="Global">
+        <Grid Classes="body">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50"/>
+            <ColumnDefinition Width="200"/>
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+          </Grid.RowDefinitions>
+          <TextBlock Grid.Row="0" Grid.Column="0">Host: </TextBlock>
+          <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Host}"/>
+          <TextBlock Grid.Row="1" Grid.Column="0">Port: </TextBlock>
+          <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Port}"/>
+        </Grid>
+      </TabItem>
+      <TabItem Header="Java">
+        <StackPanel Classes="body">
+          <Button Content="JDK Management" Classes="bar" Click="OpenJdkMgmtWin"/>
+          <Button Content="Maven Management" Classes="bar"/>
+        </StackPanel>
+      </TabItem>
+      <!-- <TabItem Header="Tab 3">
+        <TextBlock Margin="5">This is tab 3 content</TextBlock>
+      </TabItem> -->
+    </TabControl>
+    <DockPanel >
+      <Button Classes="bar" Content="Confirm" Command="{Binding ConfirmCommand}"/>
+    </DockPanel>
+  </StackPanel>
+</UserControl>

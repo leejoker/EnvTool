@@ -1,0 +1,69 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+
+        <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">true</IsWindows>
+        <IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</IsOSX>
+        <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
+        <RootNamespace>EnvTool</RootNamespace>
+
+<!--        <PublishAot>true</PublishAot>-->
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(IsWindows)'=='true'">
+        <DefineConstants>Windows</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(IsOSX)'=='true'">
+        <DefineConstants>OSX</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(IsLinux)'=='true'">
+        <DefineConstants>Linux</DefineConstants>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <AvaloniaResource Include="Assets\**"/>
+        <Compile Include="DataModels\ProxyConfigModel.fs"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="Utils\CmdUtils.fs"/>
+        <Compile Include="Utils\SysInfo.fs"/>
+        <Compile Include="Utils\FileUtils.fs"/>
+        <Compile Include="Utils\ProxyUtils.fs" />
+        <Compile Include="Services\ProxyConfigService.fs"/>
+        <Compile Include="Services\JpvmService.fs"/>
+        <Compile Include="ViewModels\Utils\MessageBoxUtils.fs"/>
+        <Compile Include="ViewModels\ViewModelBase.fs"/>
+        <Compile Include="ViewModels\JdkManagementViewModel.fs"/>
+        <Compile Include="ViewModels\MainViewModel.fs"/>
+        <Compile Include="ViewModels\ProxyConfigViewModel.fs"/>
+        <Compile Include="ViewModels\MainWindowViewModel.fs"/>
+        <Compile Include="ViewModels\JavaConfigWindowViewModel.fs"/>
+        <Compile Include="ViewLocator.fs"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="Views\JdkManagementView.axaml.fs"/>
+        <Compile Include="Views\JdkManagementWindow.axaml.fs"/>
+        <Compile Include="Views\ProxyConfigView.axaml.fs"/>
+        <Compile Include="Views\MainView.axaml.fs"/>
+        <Compile Include="Views\MainWindow.axaml.fs"/>
+        <Compile Include="App.axaml.fs"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Avalonia" Version="11.0.7"/>
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.7"/>
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.7"/>
+        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.7"/>
+        <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.7"/>
+        <PackageReference Include="MessageBox.Avalonia" Version="3.1.5.1"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
+        <PackageReference Include="SharpZipLib" Version="1.4.2"/>
+    </ItemGroup>
+
+    <ItemGroup/>
+</Project>

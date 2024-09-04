@@ -1,11 +1,11 @@
 module Tests
 
 open Xunit
-open ProxyTool.Services
-open ProxyTool.Services.JpvmModule
-open ProxyTool.Utils.FileUtils
-open ProxyTool.Utils.ProxyUtils
-open ProxyTool.Utils.SysInfo
+open EnvTool.Services
+open EnvTool.Services.JpvmModule
+open EnvTool.Utils.FileUtils
+open EnvTool.Utils.ProxyUtils
+open EnvTool.Utils.SysInfo
 
 [<Fact>]
 let ``Jpvm Install Test`` () =

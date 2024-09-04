@@ -1,6 +1,6 @@
-# ProxyTool
+# EnvTool
 
-This is a proxy toolbox for Windows, Linux and MacOS.
+This is a environment toolbox for Windows, Linux and MacOS.
 
 ## System Proxy
 

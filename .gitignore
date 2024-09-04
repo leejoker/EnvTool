@@ -2,10 +2,10 @@
 # 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
 ################################################################################
 
-/.vs/ProxyTool
+/.vs/EnvTool
 /Tests/bin/Debug/net8.0
 /Tests/obj
-/ProxyTool/.idea/.idea.ProxyTool/.idea
+/EnvTool/.idea/.idea.EnvTool/.idea
 
 .fake
 .vscode/
