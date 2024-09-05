@@ -7,6 +7,7 @@
         x:Class="EnvTool.Views.MainWindow"
         Icon="/Assets/logo.ico"
         Title="EnvTool"
+        x:DataType="vm:MainWindowViewModel"
         Content="{Binding ContentViewModel}">
     <Design.DataContext>
         <vm:MainWindowViewModel />

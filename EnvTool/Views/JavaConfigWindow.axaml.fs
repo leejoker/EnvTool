@@ -3,7 +3,7 @@
 open Avalonia.Controls
 open Avalonia.Markup.Xaml
 
-type JdkManagementWindow() as this =
+type JavaConfigWindow() as this =
     inherit Window()
 
     do this.Width <- 800

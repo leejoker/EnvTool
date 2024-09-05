@@ -14,5 +14,5 @@ type ProxyConfigView() as this =
     member private this.InitializeComponent() = AvaloniaXamlLoader.Load(this)
 
     member this.OpenJdkMgmtWin (sender: obj) (args: RoutedEventArgs) =
-        let win = JdkManagementWindow(DataContext = JavaConfigWindowViewModel())
+        let win = JavaConfigWindow(DataContext = JavaConfigWindowViewModel())
         win.Show()

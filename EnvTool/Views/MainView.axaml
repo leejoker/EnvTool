@@ -4,10 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
              xmlns:vm="using:EnvTool.ViewModels"
+             x:DataType="vm:MainViewModel"
              x:Class="EnvTool.Views.MainView">
-    <Design.DataContext>
-        <vm:MainViewModel />
-    </Design.DataContext>
     <UserControl.Styles>
         <Style Selector="Button">
             <Setter Property="FontFamily" Value="微软雅黑" />
@@ -65,7 +63,10 @@
     <StackPanel>
         <DockPanel Classes="header">
             <TextBlock Classes="title">EnvTool</TextBlock>
-            <Button Classes="config" Command="{Binding $parent[Window].DataContext.ProxyConfig}">Config</Button>
+            <Button Classes="config"
+                    Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).ProxyConfig}">
+                Config
+            </Button>
         </DockPanel>
         <Separator Classes="sep" />
         <Grid Classes="body" ColumnDefinitions="100,200" RowDefinitions="50,50">

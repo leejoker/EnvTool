@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <OutputType>WinExe</OutputType>
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>
@@ -8,8 +9,11 @@
         <IsOSX Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' == 'true'">true</IsOSX>
         <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
         <RootNamespace>EnvTool</RootNamespace>
-
-<!--        <PublishAot>true</PublishAot>-->
+        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <PublishAot>true</PublishAot>
+        <PublishTrimmed>true</PublishTrimmed>
+        <TrimMode>partial</TrimMode>
+        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(IsWindows)'=='true'">
@@ -31,14 +35,14 @@
         <Compile Include="Utils\CmdUtils.fs"/>
         <Compile Include="Utils\SysInfo.fs"/>
         <Compile Include="Utils\FileUtils.fs"/>
-        <Compile Include="Utils\ProxyUtils.fs" />
+        <Compile Include="Utils\ProxyUtils.fs"/>
         <Compile Include="Services\ProxyConfigService.fs"/>
         <Compile Include="Services\JpvmService.fs"/>
         <Compile Include="ViewModels\Utils\MessageBoxUtils.fs"/>
         <Compile Include="ViewModels\ViewModelBase.fs"/>
         <Compile Include="ViewModels\JdkManagementViewModel.fs"/>
-        <Compile Include="ViewModels\MainViewModel.fs"/>
         <Compile Include="ViewModels\ProxyConfigViewModel.fs"/>
+        <Compile Include="ViewModels\MainViewModel.fs"/>
         <Compile Include="ViewModels\MainWindowViewModel.fs"/>
         <Compile Include="ViewModels\JavaConfigWindowViewModel.fs"/>
         <Compile Include="ViewLocator.fs"/>
@@ -46,15 +50,17 @@
 
     <ItemGroup>
         <Compile Include="Views\JdkManagementView.axaml.fs"/>
-        <Compile Include="Views\JdkManagementWindow.axaml.fs"/>
+        <Compile Include="Views\JavaConfigWindow.axaml.fs"/>
         <Compile Include="Views\ProxyConfigView.axaml.fs"/>
         <Compile Include="Views\MainView.axaml.fs"/>
         <Compile Include="Views\MainWindow.axaml.fs"/>
         <Compile Include="App.axaml.fs"/>
+        <Compile Include="Desktop.fs"/>
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Avalonia" Version="11.0.7"/>
+        <PackageReference Include="Avalonia.Desktop" Version="11.0.7"/>
         <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.7"/>
         <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.7"/>
         <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.7"/>

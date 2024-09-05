@@ -2,7 +2,7 @@
 
 open EnvTool.Utils.ProxyUtils
 
-type MainViewModel() as this =
+type MainViewModel() =
     inherit ViewModelBase()
 
     let mutable host = Unchecked.defaultof<string>

@@ -8,7 +8,7 @@ open Avalonia.Markup.Xaml
 open EnvTool.ViewModels
 open EnvTool.Views
 
-type App() as this =
+type App() =
     inherit Application()
 
     do MainWindow.HideState <- false

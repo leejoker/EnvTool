@@ -28,5 +28,8 @@ type MainWindow() as this =
         and set v = hideState <- v
 
     member private this.InitializeComponent() =
+#if DEBUG
+        this.AttachDevTools()
+#endif
         AvaloniaXamlLoader.Load(this)
         this.WindowStartupLocation <- WindowStartupLocation.CenterScreen

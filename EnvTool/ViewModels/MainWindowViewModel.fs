@@ -3,7 +3,9 @@
 open ReactiveUI
 open EnvTool.Services
 open EnvTool.DataModels
+open EnvTool.Utils.ProxyUtils
 open EnvTool.ViewModels.Utils.MessageBoxUtils
+open System
 
 type MainWindowViewModel() as this =
     inherit ViewModelBase()
@@ -39,20 +41,24 @@ type MainWindowViewModel() as this =
         with get () = contentViewModel
         and private set (value: ViewModelBase) = this.RaiseAndSetIfChanged(&contentViewModel, value) |> ignore
 
+    member this.BackToMainView() =
+        let proxyConfig = this.ContentViewModel :?> ProxyConfigViewModel
+        _mainViewModel <- this.CreateMainViewModel proxyConfig.Host proxyConfig.Port
+
+        if _mainViewModel.GitProxyEnabled then
+            SetGitProxy proxyConfig.Host proxyConfig.Port
+
+        this.ContentViewModel <- _mainViewModel
+
+    member this.Confirm() =
+        let proxyConfig = this.ContentViewModel :?> ProxyConfigViewModel
+        let hostOk = String.IsNullOrWhiteSpace(proxyConfig.Host) |> not
+        let portOk = proxyConfig.Port > 0 && proxyConfig.Port < 65535
+
+        if hostOk && portOk then
+            proxyConfigService.SaveConfig(ProxyConfigModel(proxyConfig.Host, proxyConfig.Port))
+            CreateTipBox "保存成功" |> ignore
+
     member this.ProxyConfig() =
         let proxyConfigModel = ProxyConfigViewModel(this.ProxyConfigModel)
-
-        proxyConfigModel.BackCommand.Subscribe(fun _ ->
-            _mainViewModel <- this.CreateMainViewModel proxyConfigModel.Host proxyConfigModel.Port
-            this.ContentViewModel <- _mainViewModel)
-        |> ignore
-
-        proxyConfigModel.ConfirmCommand.Subscribe(fun p ->
-            this.ProxyConfigModel <- ProxyConfigModel(p.Host, p.Port)
-            proxyConfigService.SaveConfig(this.ProxyConfigModel)
-            CreateTipBox "保存成功" |> ignore
-            _mainViewModel <- this.CreateMainViewModel proxyConfigModel.Host proxyConfigModel.Port
-            this.ContentViewModel <- _mainViewModel)
-        |> ignore
-
         this.ContentViewModel <- proxyConfigModel

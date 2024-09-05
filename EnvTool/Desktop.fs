@@ -1,18 +1,19 @@
-namespace EnvTool.Desktop
+﻿namespace EnvTool
+
 open System
 open Avalonia
+open Avalonia.Logging
 open Avalonia.ReactiveUI
 open EnvTool
 
 module Program =
-
-    [<CompiledName "BuildAvaloniaApp">] 
-    let buildAvaloniaApp () = 
+    [<CompiledName "BuildAvaloniaApp">]
+    let buildAvaloniaApp () =
         AppBuilder
             .Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()
-            .LogToTrace(areas = Array.empty)
+            .LogToTrace(LogEventLevel.Debug, LogArea.Property, LogArea.Layout, LogArea.Binding)
             .UseReactiveUI()
 
     [<EntryPoint; STAThread>]
