@@ -1,8 +1,11 @@
 ﻿namespace EnvTool.Utils
 
 open System.IO
+open System.Net
+open System.Net.NetworkInformation
 open System.Runtime.InteropServices
 open System
+open Microsoft.FSharp.Collections
 open Microsoft.Win32
 
 module SysInfo =
@@ -96,3 +99,22 @@ module SysInfo =
                 SetUserEnvironmentVariable "PATH" $"{value}{Path.DirectorySeparatorChar}bin:{o.Value}"
         | None -> SetUserEnvironmentVariable "PATH" $"{value}{Path.DirectorySeparatorChar}bin:$PATH"
 #endif
+
+    let IPAddresses () =
+        let hostName = Dns.GetHostName()
+        let ipAddresses = Dns.GetHostAddresses(hostName)
+        
+        ipAddresses
+        |> Seq.filter (fun ip -> ip.AddressFamily.ToString() = "InterNetwork")
+        |> Seq.map _.ToString() |> Seq.toList
+    
+    let DNSAddresses () =
+        NetworkInterface.GetAllNetworkInterfaces()
+        |> Seq.filter (fun ni -> ni.NetworkInterfaceType = NetworkInterfaceType.Ethernet)
+        |> Seq.map (_.GetIPProperties().DnsAddresses)
+        |> Seq.concat
+        |> Seq.filter (fun ip -> ip.AddressFamily.ToString() = "InterNetwork")
+        |> Seq.map _.ToString() |> Seq.toList
+
+    let HostAddresses () =
+        IPAddresses() @ DNSAddresses()

@@ -71,4 +71,8 @@ let ``GetEnvironment Test`` () =
     | None -> printfn "not found"
 
 [<Fact>]
-let ``SystemProxyStatus Test`` () = Assert.True(SystemProxyStatus() = false)
+let ``SystemProxyStatus Test`` () =
+    Assert.True(SystemProxyStatus() = false)
+
+let ``HostAddresses Test`` () =
+    HostAddresses() |> Seq.iter (fun ip -> printf $"{ip}\n")
