@@ -14,6 +14,7 @@ type MainWindow() as this =
     do this.CanResize <- false
     do this.InitializeComponent()
 
+#if Windows
     do
         this
             .GetObservable(Window.WindowStateProperty)
@@ -22,6 +23,8 @@ type MainWindow() as this =
                     MainWindow.HideState <- true
                     this.Hide())
         |> ignore
+
+#endif
 
     static member HideState
         with get () = hideState

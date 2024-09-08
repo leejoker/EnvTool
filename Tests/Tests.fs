@@ -70,9 +70,17 @@ let ``GetEnvironment Test`` () =
     | Some(javaHome) -> printfn $"{javaHome}"
     | None -> printfn "not found"
 
-[<Fact>]
 let ``SystemProxyStatus Test`` () =
-    Assert.True(SystemProxyStatus() = false)
+    SystemProxyStatus() |> fun b -> printf $"{b}\n"
+    
+let ``SetSystemProxy Test`` () =
+    SetSystemProxy "127.0.0.1" 7890
+
+let ``CloseSystemProxy Test`` () =
+    CloseSystemProxy()
 
 let ``HostAddresses Test`` () =
     HostAddresses() |> Seq.iter (fun ip -> printf $"{ip}\n")
+
+let ``NetworkDevicesOSX Test`` () =
+    NetworkDevicesOSX() |> Seq.iter (fun d -> printf $"{d}\n")

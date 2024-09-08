@@ -10,10 +10,10 @@
         <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux>
         <RootNamespace>EnvTool</RootNamespace>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        <PublishAot>true</PublishAot>
-        <PublishTrimmed>true</PublishTrimmed>
-        <TrimMode>partial</TrimMode>
-        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+<!--        <PublishAot>true</PublishAot>-->
+<!--        <PublishTrimmed>true</PublishTrimmed>-->
+<!--        <TrimMode>partial</TrimMode>-->
+<!--        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>-->
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(IsWindows)'=='true'">
