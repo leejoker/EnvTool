@@ -72,15 +72,15 @@ let ``GetEnvironment Test`` () =
 
 let ``SystemProxyStatus Test`` () =
     SystemProxyStatus() |> fun b -> printf $"{b}\n"
-    
-let ``SetSystemProxy Test`` () =
-    SetSystemProxy "127.0.0.1" 7890
 
-let ``CloseSystemProxy Test`` () =
-    CloseSystemProxy()
+let ``SetSystemProxy Test`` () = SetSystemProxy "127.0.0.1" 7890
+
+let ``CloseSystemProxy Test`` () = CloseSystemProxy()
 
 let ``HostAddresses Test`` () =
     HostAddresses() |> Seq.iter (fun ip -> printf $"{ip}\n")
 
+#if OSX
 let ``NetworkDevicesOSX Test`` () =
     NetworkDevicesOSX() |> Seq.iter (fun d -> printf $"{d}\n")
+#endif

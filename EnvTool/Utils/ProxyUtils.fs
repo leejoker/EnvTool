@@ -1,6 +1,9 @@
 ﻿namespace EnvTool.Utils
 
 open EnvTool.Utils.CmdUtils
+#if Windows
+open Microsoft.Win32
+#endif
 
 module ProxyUtils =
     let GitProxyEnabled () : bool =
