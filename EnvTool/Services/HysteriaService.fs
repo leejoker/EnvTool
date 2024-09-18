@@ -8,8 +8,14 @@ module HysteriaService =
 
     let StartHysteriaProcess (exec: string) (config: string) : ProcessStatusTuple =
         let p = new Process()
+#if Windows
         p.StartInfo.FileName <- $"\"{exec}\""
         p.StartInfo.Arguments <- $"-c \"{config}\""
+#else
+        p.StartInfo.FileName <- exec
+        p.StartInfo.Arguments <- $"-c {config}"
+#endif
+        p.StartInfo.WorkingDirectory <- "/"
         p.StartInfo.UseShellExecute <- false
         p.StartInfo.RedirectStandardInput <- true
         p.StartInfo.RedirectStandardOutput <- true

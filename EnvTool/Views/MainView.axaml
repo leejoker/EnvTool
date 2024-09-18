@@ -69,13 +69,16 @@
             </Button>
         </DockPanel>
         <Separator Classes="sep" />
-        <Grid Classes="body" ColumnDefinitions="100,200" RowDefinitions="50,50">
+        <Grid Classes="body" ColumnDefinitions="100,200" RowDefinitions="50,50,50">
             <TextBlock Grid.Row="0" Grid.Column="0"> 系统代理 </TextBlock>
             <ToggleSwitch Grid.Row="0" Grid.Column="1" OffContent="" OnContent="" Command="{Binding HandleSystemProxy}"
                           IsChecked="{Binding SystemProxyEnabled}" />
             <TextBlock Grid.Row="1" Grid.Column="0"> Git 代理 </TextBlock>
             <ToggleSwitch Grid.Row="1" Grid.Column="1" OffContent="" OnContent="" Command="{Binding HandleGitProxy}"
                           IsChecked="{Binding GitProxyEnabled}" />
+            <TextBlock Grid.Row="2" Grid.Column="0"> Hysteria2 </TextBlock>
+            <ToggleSwitch Grid.Row="2" Grid.Column="1" OffContent="" OnContent="" Command="{Binding HandleHysteriaProxy}"
+                          IsChecked="{Binding HysteriaProxyEnabled}" />
         </Grid>
     </StackPanel>
 </UserControl>

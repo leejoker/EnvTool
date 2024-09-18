@@ -27,12 +27,16 @@ type MainWindowViewModel() as this =
     do mainView.Port <- proxyConfigModel.Port
     do this.ContentViewModel <- mainView
 
-    member private this.CreateMainViewModel (host: string) (port: int) : MainViewModel =
+    member private this.CreateMainViewModel(proxyConfigView: ProxyConfigViewModel) : MainViewModel =
         let mainViewModel = MainViewModel()
-        mainViewModel.Host <- host
-        mainViewModel.Port <- port
+        mainViewModel.Host <- proxyConfigView.Host
+        mainViewModel.Port <- proxyConfigView.Port
 
-        this.ProxyConfigModel <- ProxyConfigModel(host, port)
+        if proxyConfigView.HysteriaEnabled then
+            mainViewModel.HysteriaExec <- proxyConfigView.HysteriaExec
+            mainViewModel.HysteriaConfig <- proxyConfigView.HysteriaConfig
+
+        this.ProxyConfigModel <- ProxyConfigModel(proxyConfigView.Host, proxyConfigView.Port)
         mainViewModel
 
     member this.ProxyConfigModel
@@ -45,7 +49,7 @@ type MainWindowViewModel() as this =
 
     member this.BackToMainView() =
         let proxyConfig = this.ContentViewModel :?> ProxyConfigViewModel
-        _mainViewModel <- this.CreateMainViewModel proxyConfig.Host proxyConfig.Port
+        _mainViewModel <- this.CreateMainViewModel proxyConfig
 
         if _mainViewModel.GitProxyEnabled then
             SetGitProxy proxyConfig.Host proxyConfig.Port
