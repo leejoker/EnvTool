@@ -28,6 +28,7 @@ type MainWindowViewModel() as this =
 
     do
         if proxyConfigModel.HysteriaEnabled = "true" then
+            mainView.HysteriaEnabled <- true
             mainView.HysteriaExec <- proxyConfigModel.HysteriaExec
             mainView.HysteriaConfig <- proxyConfigModel.HysteriaConfig
 
@@ -39,6 +40,7 @@ type MainWindowViewModel() as this =
         mainViewModel.Port <- proxyConfigView.Port
 
         if proxyConfigView.HysteriaEnabled then
+            mainViewModel.HysteriaEnabled <- true
             mainViewModel.HysteriaExec <- proxyConfigView.HysteriaExec
             mainViewModel.HysteriaConfig <- proxyConfigView.HysteriaConfig
 

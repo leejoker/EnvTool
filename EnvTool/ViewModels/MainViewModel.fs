@@ -16,6 +16,7 @@ type MainViewModel() =
     let mutable gitProxyEnabled = false
     let mutable systemProxyEnabled = false
     let mutable hysteriaProxyEnabled = false
+    let mutable hysteriaEnabled = false
 
     do systemProxyEnabled <- SystemProxyStatus()
     do gitProxyEnabled <- GitProxyEnabled()
@@ -34,6 +35,10 @@ type MainViewModel() =
         with get () = hysteriaProxyEnabled
         and set v = hysteriaProxyEnabled <- v
 
+    member this.HysteriaEnabled
+        with get () = hysteriaEnabled
+        and set v = hysteriaEnabled <- v
+        
     member this.Host
         with get () = host
         and set v = host <- v

@@ -76,8 +76,9 @@
             <TextBlock Grid.Row="1" Grid.Column="0"> Git 代理 </TextBlock>
             <ToggleSwitch Grid.Row="1" Grid.Column="1" OffContent="" OnContent="" Command="{Binding HandleGitProxy}"
                           IsChecked="{Binding GitProxyEnabled}" />
-            <TextBlock Grid.Row="2" Grid.Column="0"> Hysteria2 </TextBlock>
-            <ToggleSwitch Grid.Row="2" Grid.Column="1" OffContent="" OnContent="" Command="{Binding HandleHysteriaProxy}"
+            <TextBlock Grid.Row="2" Grid.Column="0" IsVisible="{Binding HysteriaEnabled}"> Hysteria2 </TextBlock>
+            <ToggleSwitch Grid.Row="2" Grid.Column="1" OffContent="" OnContent="" IsVisible="{Binding HysteriaEnabled}"
+                          Command="{Binding HandleHysteriaProxy}"
                           IsChecked="{Binding HysteriaProxyEnabled}" />
         </Grid>
     </StackPanel>
