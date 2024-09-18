@@ -1,8 +1,6 @@
-<div style="text-align: center;">
-<img src="EnvTool/Assets/logo.ico" width=100 height="100"/>
-<p><h1>EnvTool</h1></p>
+# <img src="EnvTool/Assets/logo.ico" width=30 height=30> EnvTool
+
 This is a environment toolbox for Windows, Linux and MacOS.
-</div>
 
 ## Other Features
 
