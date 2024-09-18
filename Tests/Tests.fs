@@ -84,3 +84,6 @@ let ``HostAddresses Test`` () =
 let ``NetworkDevicesOSX Test`` () =
     NetworkDevicesOSX() |> Seq.iter (fun d -> printf $"{d}\n")
 #endif
+
+let ``CurrentWorkDir Test`` () =
+    CurrentWorkDir() |> fun dir -> printf $"{dir}\n"

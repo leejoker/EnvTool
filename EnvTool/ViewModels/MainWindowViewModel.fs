@@ -31,6 +31,8 @@ type MainWindowViewModel() as this =
         let mainViewModel = MainViewModel()
         mainViewModel.Host <- host
         mainViewModel.Port <- port
+
+        this.ProxyConfigModel <- ProxyConfigModel(host, port)
         mainViewModel
 
     member this.ProxyConfigModel

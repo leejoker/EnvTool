@@ -3,16 +3,18 @@
 open EnvTool.DataModels
 open System.IO
 open Newtonsoft.Json
+open EnvTool.Utils.SysInfo
 
 type ProxyConfigService() =
 
-    let configPath: string = "./config/proxyConfig.json"
-    let defaultProxyConfig: ProxyConfigModel = new ProxyConfigModel("127.0.0.1", 10809)
+    let configDir = $"{CurrentWorkDir()}config"
+    let configPath: string = $"{configDir}/proxyConfig.json"
+    let defaultProxyConfig: ProxyConfigModel = ProxyConfigModel("127.0.0.1", 10809)
 
     member this.SaveConfig(proxy: ProxyConfigModel) =
-        Directory.Exists("config")
+        Directory.Exists(configDir)
         |> function
-            | false -> Directory.CreateDirectory("./config") |> ignore
+            | false -> Directory.CreateDirectory(configDir) |> ignore
             | _ -> ()
 
         File.WriteAllText(configPath, JsonConvert.SerializeObject(proxy))
@@ -21,12 +23,12 @@ type ProxyConfigService() =
         File.ReadAllText(filePath) |> JsonConvert.DeserializeObject<ProxyConfigModel>
 
     member this.LoadConfig() =
-        Directory.Exists("config")
+        Directory.Exists(configDir)
         |> function
             | false -> defaultProxyConfig
             | true ->
-                Directory.EnumerateFiles("./config")
-                |> Seq.filter (fun x -> x.ToString().EndsWith("proxyConfig.json"))
+                Directory.EnumerateFiles(configDir)
+                |> Seq.filter (_.ToString().EndsWith("proxyConfig.json"))
                 |> fun l ->
                     match Seq.isEmpty l with
                     | true -> defaultProxyConfig

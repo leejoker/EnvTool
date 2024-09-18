@@ -118,3 +118,6 @@ module SysInfo =
 
     let HostAddresses () =
         IPAddresses() @ DNSAddresses()
+        
+    let CurrentWorkDir () =
+        AppDomain.CurrentDomain.BaseDirectory
