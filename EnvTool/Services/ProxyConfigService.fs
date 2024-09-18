@@ -17,7 +17,7 @@ type ProxyConfigService() =
             | false -> Directory.CreateDirectory(configDir) |> ignore
             | _ -> ()
 
-        File.WriteAllText(configPath, JsonConvert.SerializeObject(proxy))
+        File.WriteAllText(configPath, JsonConvert.SerializeObject(proxy, Formatting.Indented))
 
     member this.LoadFromFile(filePath: string) =
         File.ReadAllText(filePath) |> JsonConvert.DeserializeObject<ProxyConfigModel>

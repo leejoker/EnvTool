@@ -56,9 +56,19 @@ type MainWindowViewModel() as this =
         let proxyConfig = this.ContentViewModel :?> ProxyConfigViewModel
         let hostOk = String.IsNullOrWhiteSpace(proxyConfig.Host) |> not
         let portOk = proxyConfig.Port > 0 && proxyConfig.Port < 65535
+        let hysteriaEnabled = proxyConfig.HysteriaEnabled
+        let hysteriaExecOk = String.IsNullOrWhiteSpace(proxyConfig.HysteriaExec) |> not
+        let hysteriaConfigOk = String.IsNullOrWhiteSpace(proxyConfig.HysteriaConfig) |> not
 
         if hostOk && portOk then
-            proxyConfigService.SaveConfig(ProxyConfigModel(proxyConfig.Host, proxyConfig.Port))
+            let config = ProxyConfigModel(proxyConfig.Host, proxyConfig.Port)
+
+            if hysteriaEnabled && hysteriaExecOk && hysteriaConfigOk then
+                config.HysteriaEnabled <- "true"
+                config.HysteriaExec <- proxyConfig.HysteriaExec
+                config.HysteriaConfig <- proxyConfig.HysteriaConfig
+
+            proxyConfigService.SaveConfig(config)
             CreateTipBox "保存成功" |> ignore
 
     member this.ProxyConfig() =

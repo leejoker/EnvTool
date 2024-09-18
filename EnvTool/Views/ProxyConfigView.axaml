@@ -93,9 +93,22 @@
                     <Button Content="Maven Management" Classes="bar" />
                 </StackPanel>
             </TabItem>
-            <!-- <TabItem Header="Tab 3">
-        <TextBlock Margin="5">This is tab 3 content</TextBlock>
-      </TabItem> -->
+            <TabItem Header="Hysteria" IsVisible="{Binding HysteriaEnabled}">
+                <Grid Classes="body">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="200" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50" />
+                        <RowDefinition Height="50" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0">exec: </TextBlock>
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding HysteriaExec}" />
+                    <TextBlock Grid.Row="1" Grid.Column="0">config: </TextBlock>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding HysteriaConfig}" />
+                </Grid>
+            </TabItem>
         </TabControl>
         <DockPanel>
             <Button Classes="bar" Content="Confirm"
