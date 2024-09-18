@@ -25,6 +25,12 @@ type MainWindowViewModel() as this =
 
     do mainView.Host <- proxyConfigModel.Host
     do mainView.Port <- proxyConfigModel.Port
+
+    do
+        if proxyConfigModel.HysteriaEnabled = "true" then
+            mainView.HysteriaExec <- proxyConfigModel.HysteriaExec
+            mainView.HysteriaConfig <- proxyConfigModel.HysteriaConfig
+
     do this.ContentViewModel <- mainView
 
     member private this.CreateMainViewModel(proxyConfigView: ProxyConfigViewModel) : MainViewModel =
