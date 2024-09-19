@@ -3,7 +3,6 @@
 open ReactiveUI
 open EnvTool.Services
 open EnvTool.DataModels
-open EnvTool.Utils.ProxyUtils
 open EnvTool.ViewModels.Utils.MessageBoxUtils
 open System
 
@@ -19,33 +18,38 @@ type MainWindowViewModel() as this =
 
     let proxyConfigService = ProxyConfigService()
 
-    let mainView = MainViewModel()
-
-    do this.ProxyConfigModel <- proxyConfigService.LoadConfig()
-
-    do mainView.Host <- proxyConfigModel.Host
-    do mainView.Port <- proxyConfigModel.Port
-
     do
-        if proxyConfigModel.HysteriaEnabled = "true" then
-            mainView.HysteriaEnabled <- true
-            mainView.HysteriaExec <- proxyConfigModel.HysteriaExec
-            mainView.HysteriaConfig <- proxyConfigModel.HysteriaConfig
+        if proxyConfigModel = Unchecked.defaultof<ProxyConfigModel> then
+            proxyConfigModel <- proxyConfigService.LoadConfig()
 
-    do this.ContentViewModel <- mainView
+    do this.ContentViewModel <- this.InitMainView proxyConfigModel
 
-    member private this.CreateMainViewModel(proxyConfigView: ProxyConfigViewModel) : MainViewModel =
-        let mainViewModel = MainViewModel()
-        mainViewModel.Host <- proxyConfigView.Host
-        mainViewModel.Port <- proxyConfigView.Port
+    member private this.InitProxyConfigByView(proxyConfigView: ProxyConfigViewModel) =
+        let proxyConfig = ProxyConfigModel(proxyConfigView.Host, proxyConfigView.Port)
 
         if proxyConfigView.HysteriaEnabled then
-            mainViewModel.HysteriaEnabled <- true
-            mainViewModel.HysteriaExec <- proxyConfigView.HysteriaExec
-            mainViewModel.HysteriaConfig <- proxyConfigView.HysteriaConfig
+            proxyConfig.HysteriaEnabled <- "true"
+            proxyConfig.HysteriaExec <- proxyConfigView.HysteriaExec
+            proxyConfig.HysteriaConfig <- proxyConfigView.HysteriaConfig
 
-        this.ProxyConfigModel <- ProxyConfigModel(proxyConfigView.Host, proxyConfigView.Port)
-        mainViewModel
+        this.ProxyConfigModel <- proxyConfig
+
+    member private this.InitMainView(proxyConfig: ProxyConfigModel) : MainViewModel =
+        let mainViewParam = MainViewModel()
+        mainViewParam.Host <- proxyConfig.Host
+        mainViewParam.Port <- proxyConfig.Port
+
+        if proxyConfig.HysteriaEnabled = "true" then
+            mainViewParam.HysteriaEnabled <- true
+            mainViewParam.HysteriaExec <- proxyConfig.HysteriaExec
+            mainViewParam.HysteriaConfig <- proxyConfig.HysteriaConfig
+
+        mainViewParam
+
+
+    member private this.CreateMainViewModel(proxyConfigView: ProxyConfigViewModel) : MainViewModel =
+        this.InitProxyConfigByView proxyConfigView
+        this.InitMainView this.ProxyConfigModel
 
     member this.ProxyConfigModel
         with get () = proxyConfigModel
@@ -58,9 +62,6 @@ type MainWindowViewModel() as this =
     member this.BackToMainView() =
         let proxyConfig = this.ContentViewModel :?> ProxyConfigViewModel
         _mainViewModel <- this.CreateMainViewModel proxyConfig
-
-        if _mainViewModel.GitProxyEnabled then
-            SetGitProxy proxyConfig.Host proxyConfig.Port
 
         this.ContentViewModel <- _mainViewModel
 

@@ -2,13 +2,20 @@
 
 open Newtonsoft.Json
 
-type ProxyConfigModel(host: string, port: int) =
+type ProxyConfigModel() =
 
-    let mutable _host: string = host
-    let mutable _port: int = port
+    let mutable _host: string = Unchecked.defaultof<string>
+    let mutable _port: int = Unchecked.defaultof<int>
     let mutable _hysteriaEnabled: string = Unchecked.defaultof<string>
     let mutable _hysteriaExec: string = Unchecked.defaultof<string>
     let mutable _hysteriaConfig: string = Unchecked.defaultof<string>
+
+    new(host: string, port: int) as this =
+        ProxyConfigModel()
+
+        then
+            this.Host <- host
+            this.Port <- port
 
     [<JsonProperty("global.host")>]
     member this.Host

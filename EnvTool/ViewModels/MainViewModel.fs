@@ -1,6 +1,5 @@
 ﻿namespace EnvTool.ViewModels
 
-open System.Diagnostics
 open EnvTool.Utils.ProxyUtils
 open EnvTool.Services.HysteriaService
 
@@ -12,7 +11,7 @@ type MainViewModel() =
     let mutable hysteriaExec = Unchecked.defaultof<string>
     let mutable hysteriaConfig = Unchecked.defaultof<string>
     let mutable hysteriaProcess = None
-    
+
     let mutable gitProxyEnabled = false
     let mutable systemProxyEnabled = false
     let mutable hysteriaProxyEnabled = false
@@ -20,7 +19,7 @@ type MainViewModel() =
 
     do systemProxyEnabled <- SystemProxyStatus()
     do gitProxyEnabled <- GitProxyEnabled()
-    
+
     //TODO add hysteriaStatus
 
     member this.GitProxyEnabled
@@ -38,7 +37,7 @@ type MainViewModel() =
     member this.HysteriaEnabled
         with get () = hysteriaEnabled
         and set v = hysteriaEnabled <- v
-        
+
     member this.Host
         with get () = host
         and set v = host <- v
@@ -70,6 +69,7 @@ type MainViewModel() =
     member this.HandleHysteriaProxy() =
         if hysteriaProxyEnabled then
             let (result, proc) = StartHysteriaProcess hysteriaExec hysteriaConfig
+
             if result then
                 hysteriaProcess <- proc
         else
