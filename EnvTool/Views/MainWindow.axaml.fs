@@ -23,8 +23,12 @@ type MainWindow() as this =
                     MainWindow.HideState <- true
                     this.Hide())
         |> ignore
-
 #endif
+
+    override this.OnClosing(args: WindowClosingEventArgs) =
+        MainWindow.HideState <- true
+        this.Hide()
+        args.Cancel <- true
 
     static member HideState
         with get () = hideState

@@ -7,6 +7,8 @@ This is a environment toolbox for Windows, Linux and MacOS.
 - [x] minimize to system tray
 - [ ] Boot with the system
 - [ ] change default window location to right bottom
+- [ ] save statements when exit
+- [ ] global statements management
 
 ## System Proxy
 
