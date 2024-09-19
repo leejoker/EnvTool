@@ -1,40 +1,56 @@
 ﻿namespace EnvTool.ViewModels
 
+open EnvTool.Services
 open ReactiveUI
-open EnvTool.DataModels
 
-type ProxyConfigViewModel(proxy: ProxyConfigModel) as this =
+type ProxyConfigViewModel() =
     inherit ViewModelBase()
 
-    let _proxy = proxy
-    let mutable _host: string = Unchecked.defaultof<string>
-    let mutable _port: int = Unchecked.defaultof<int>
-    let mutable _hysteriaEnabled: bool = false
-    let mutable _hysteriaExec: string = Unchecked.defaultof<string>
-    let mutable _hysteriaConfig: string = Unchecked.defaultof<string>
+    let mutable globalStatement: GlobalStatement = Unchecked.defaultof<GlobalStatement>
 
-    do this.Host <- _proxy.Host
-    do this.Port <- _proxy.Port
-    do this.HysteriaEnabled <- (_proxy.HysteriaEnabled = "true")
-    do this.HysteriaExec <- _proxy.HysteriaExec
-    do this.HysteriaConfig <- _proxy.HysteriaConfig
+    let mutable host = Unchecked.defaultof<string>
+    let mutable port = Unchecked.defaultof<int>
+    let mutable exec = Unchecked.defaultof<string>
+    let mutable config = Unchecked.defaultof<string>
+
+    new(globalStatement: GlobalStatement) as this =
+        ProxyConfigViewModel()
+
+        then
+            this.GlobalStatement <- globalStatement
+            this.Host <- globalStatement.GlobalProxyConfigModel.Host
+            this.Port <- globalStatement.GlobalProxyConfigModel.Port
+            this.HysteriaExec <- globalStatement.GlobalProxyConfigModel.HysteriaExec
+            this.HysteriaConfig <- globalStatement.GlobalProxyConfigModel.HysteriaConfig
+
+    member this.GlobalStatement
+        with get () = globalStatement
+        and set v = globalStatement <- v
 
     member this.Host
-        with get () = _host
-        and set (v: string) = this.RaiseAndSetIfChanged(&_host, v) |> ignore
+        with get () = host
+        and set (v: string) =
+            this.RaiseAndSetIfChanged(&host, v) |> ignore
+            globalStatement.GlobalProxyConfigModel.Host <- v
 
     member this.Port
-        with get () = _port
-        and set v = this.RaiseAndSetIfChanged(&_port, v) |> ignore
+        with get () = port
+        and set v =
+            this.RaiseAndSetIfChanged(&port, v) |> ignore
+            globalStatement.GlobalProxyConfigModel.Port <- v
 
     member this.HysteriaEnabled
-        with get () = _hysteriaEnabled
-        and set v = _hysteriaEnabled <- v
+        with get () = globalStatement.HysteriaEnabled
+        and set v = globalStatement.HysteriaEnabled <- v
 
     member this.HysteriaExec
-        with get () = _hysteriaExec
-        and set v = this.RaiseAndSetIfChanged(&_hysteriaExec, v) |> ignore
+        with get () = exec
+        and set v =
+            this.RaiseAndSetIfChanged(&exec, v) |> ignore
+            globalStatement.GlobalProxyConfigModel.HysteriaExec <- v
 
     member this.HysteriaConfig
-        with get () = _hysteriaConfig
-        and set v = this.RaiseAndSetIfChanged(&_hysteriaConfig, v) |> ignore
+        with get () = config
+        and set v =
+            this.RaiseAndSetIfChanged(&config, v) |> ignore
+            globalStatement.GlobalProxyConfigModel.HysteriaConfig <- v

@@ -1,78 +1,58 @@
 ﻿namespace EnvTool.ViewModels
 
+open EnvTool.Services
 open EnvTool.Utils.ProxyUtils
 open EnvTool.Services.HysteriaService
 
 type MainViewModel() =
     inherit ViewModelBase()
 
-    let mutable host = Unchecked.defaultof<string>
-    let mutable port = Unchecked.defaultof<int>
-    let mutable hysteriaExec = Unchecked.defaultof<string>
-    let mutable hysteriaConfig = Unchecked.defaultof<string>
-    let mutable hysteriaProcess = None
+    let mutable globalStatement = Unchecked.defaultof<GlobalStatement>
 
-    let mutable gitProxyEnabled = false
-    let mutable systemProxyEnabled = false
-    let mutable hysteriaProxyEnabled = false
-    let mutable hysteriaEnabled = false
+    new(globalStatement: GlobalStatement) as this =
+        MainViewModel()
+        then this.GlobalStatement <- globalStatement
 
-    do systemProxyEnabled <- SystemProxyStatus()
-    do gitProxyEnabled <- GitProxyEnabled()
+    member this.GlobalStatement
+        with get () = globalStatement
+        and set v = globalStatement <- v
 
     member this.GitProxyEnabled
-        with get () = gitProxyEnabled
-        and set v = gitProxyEnabled <- v
+        with get () = globalStatement.GitProxyEnabled
+        and set v = globalStatement.GitProxyEnabled <- v
 
     member this.SystemProxyEnabled
-        with get () = systemProxyEnabled
-        and set v = systemProxyEnabled <- v
+        with get () = globalStatement.SystemProxyEnabled
+        and set v = globalStatement.SystemProxyEnabled <- v
 
     member this.HysteriaProxyEnabled
-        with get () = hysteriaProxyEnabled
-        and set v = hysteriaProxyEnabled <- v
+        with get () = globalStatement.HysteriaProxyEnabled
+        and set v = globalStatement.HysteriaProxyEnabled <- v
 
     member this.HysteriaEnabled
-        with get () = hysteriaEnabled
-        and set v = hysteriaEnabled <- v
-
-    member this.Host
-        with get () = host
-        and set v = host <- v
-
-    member this.Port
-        with get () = port
-        and set v = port <- v
-
-    member this.HysteriaExec
-        with get () = hysteriaExec
-        and set v = hysteriaExec <- v
-
-    member this.HysteriaConfig
-        with get () = hysteriaConfig
-        and set v = hysteriaConfig <- v
-
-    member this.HysteriaProcess
-        with get () = hysteriaProcess
-        and set v = hysteriaProcess <- v
+        with get () = globalStatement.HysteriaEnabled
+        and set v = globalStatement.HysteriaEnabled <- v
 
     member this.HandleSystemProxy() =
-        if systemProxyEnabled then
-            SetSystemProxy host port
+        if globalStatement.SystemProxyEnabled then
+            SetSystemProxy globalStatement.GlobalProxyConfigModel.Host globalStatement.GlobalProxyConfigModel.Port
         else
             CloseSystemProxy()
 
     member this.HandleGitProxy() =
-        if gitProxyEnabled then
-            SetGitProxy host port
+        if globalStatement.GitProxyEnabled then
+            SetGitProxy globalStatement.GlobalProxyConfigModel.Host globalStatement.GlobalProxyConfigModel.Port
         else
             RemoveGitProxy()
 
     member this.HandleHysteriaProxy() =
-        if hysteriaProxyEnabled then
-            let (result, proc) = StartHysteriaProcess hysteriaExec hysteriaConfig
+        if globalStatement.HysteriaProxyEnabled then
+            let (result, proc) =
+                StartHysteriaProcess
+                    globalStatement.GlobalProxyConfigModel.HysteriaExec
+                    globalStatement.GlobalProxyConfigModel.HysteriaConfig
 
             if result then
-                hysteriaProcess <- proc
+                globalStatement.GlobalHysteriaProcess <- proc
         else
-            KillHysteriaProcess hysteriaProcess
+            KillHysteriaProcess globalStatement.GlobalHysteriaProcess

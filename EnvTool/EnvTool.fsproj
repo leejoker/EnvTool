@@ -39,6 +39,7 @@
         <Compile Include="Services\ProxyConfigService.fs"/>
         <Compile Include="Services\JpvmService.fs"/>
         <Compile Include="Services\HysteriaService.fs" />
+        <Compile Include="Services\StatementService.fs" />
         <Compile Include="ViewModels\Utils\MessageBoxUtils.fs"/>
         <Compile Include="ViewModels\ViewModelBase.fs"/>
         <Compile Include="ViewModels\JdkManagementViewModel.fs"/>
