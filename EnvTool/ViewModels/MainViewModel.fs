@@ -20,8 +20,6 @@ type MainViewModel() =
     do systemProxyEnabled <- SystemProxyStatus()
     do gitProxyEnabled <- GitProxyEnabled()
 
-    //TODO add hysteriaStatus
-
     member this.GitProxyEnabled
         with get () = gitProxyEnabled
         and set v = gitProxyEnabled <- v
@@ -53,6 +51,10 @@ type MainViewModel() =
     member this.HysteriaConfig
         with get () = hysteriaConfig
         and set v = hysteriaConfig <- v
+
+    member this.HysteriaProcess
+        with get () = hysteriaProcess
+        and set v = hysteriaProcess <- v
 
     member this.HandleSystemProxy() =
         if systemProxyEnabled then

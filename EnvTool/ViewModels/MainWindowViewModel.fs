@@ -16,6 +16,8 @@ type MainWindowViewModel() as this =
     let mutable proxyConfigModel: ProxyConfigModel =
         Unchecked.defaultof<ProxyConfigModel>
 
+    let mutable hysteriaProcess = None
+
     let proxyConfigService = ProxyConfigService()
 
     do
@@ -44,8 +46,13 @@ type MainWindowViewModel() as this =
             mainViewParam.HysteriaExec <- proxyConfig.HysteriaExec
             mainViewParam.HysteriaConfig <- proxyConfig.HysteriaConfig
 
-        mainViewParam
+        mainViewParam.HysteriaProcess <- hysteriaProcess
 
+        match hysteriaProcess with
+        | Some _ -> mainViewParam.HysteriaProxyEnabled <- true
+        | None -> ()
+
+        mainViewParam
 
     member private this.CreateMainViewModel(proxyConfigView: ProxyConfigViewModel) : MainViewModel =
         this.InitProxyConfigByView proxyConfigView
@@ -62,7 +69,6 @@ type MainWindowViewModel() as this =
     member this.BackToMainView() =
         let proxyConfig = this.ContentViewModel :?> ProxyConfigViewModel
         _mainViewModel <- this.CreateMainViewModel proxyConfig
-
         this.ContentViewModel <- _mainViewModel
 
     member this.Confirm() =
@@ -85,5 +91,7 @@ type MainWindowViewModel() as this =
             CreateTipBox "保存成功" |> ignore
 
     member this.ProxyConfig() =
+        let mainView = this.ContentViewModel :?> MainViewModel
+        hysteriaProcess <- mainView.HysteriaProcess
         let proxyConfigModel = ProxyConfigViewModel(this.ProxyConfigModel)
         this.ContentViewModel <- proxyConfigModel
