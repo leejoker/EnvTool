@@ -23,7 +23,7 @@ module CmdUtils =
             | false -> Error p
 
     let private RunCmd (p: Process, command: string) : Process =
-        p.StandardInput.WriteLine(command + "&exit")
+        p.StandardInput.WriteLine(command + " & exit")
         p.StandardInput.AutoFlush <- true
         p
 

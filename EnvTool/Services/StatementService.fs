@@ -23,10 +23,11 @@ type GlobalStatement() =
     member this.InitGlobalStatement() =
         if globalProxyConfigModel = Unchecked.defaultof<ProxyConfigModel> then
             globalProxyConfigModel <- proxyConfigService.LoadConfig()
-        // TODO init process status
+
         gitProxyEnabled <- GitProxyEnabled()
         systemProxyEnabled <- SystemProxyStatus()
         hysteriaEnabled <- globalProxyConfigModel.HysteriaEnabled = "true"
+        hysteriaProxyEnabled <- HysteriaProxyEnabled(globalProxyConfigModel.HysteriaExec)
 
     member this.GlobalProxyConfigModel
         with get () = globalProxyConfigModel

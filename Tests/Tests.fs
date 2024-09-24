@@ -87,3 +87,6 @@ let ``NetworkDevicesOSX Test`` () =
 
 let ``CurrentWorkDir Test`` () =
     CurrentWorkDir() |> fun dir -> printf $"{dir}\n"
+
+let ``HysteriaProxyEnabled`` () =
+    HysteriaProxyEnabled(@"C:\hysteria\hysteria.exe") |> fun b -> printf $"{b}\n"
