@@ -1,5 +1,6 @@
 ﻿namespace EnvTool.Utils
 
+open System.Diagnostics
 open System.IO
 open System.Net
 open System.Net.NetworkInformation
@@ -121,3 +122,7 @@ module SysInfo =
         
     let CurrentWorkDir () =
         AppDomain.CurrentDomain.BaseDirectory
+    
+    let GetProcessByPath(path: string): Option<Process> =
+        let fileName = Path.GetFileNameWithoutExtension(path)
+        Process.GetProcesses() |> Seq.tryFind (fun p -> p.ProcessName.Contains fileName)

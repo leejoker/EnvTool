@@ -55,4 +55,6 @@ type MainViewModel() =
             if result then
                 globalStatement.GlobalHysteriaProcess <- proc
         else
-            KillHysteriaProcess globalStatement.GlobalHysteriaProcess
+            KillHysteriaProcess
+                globalStatement.GlobalHysteriaProcess
+                globalStatement.GlobalProxyConfigModel.HysteriaExec

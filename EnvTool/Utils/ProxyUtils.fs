@@ -1,7 +1,6 @@
 ﻿namespace EnvTool.Utils
 
-open System.Diagnostics
-open System.IO
+open EnvTool.Utils.SysInfo
 open EnvTool.Utils.CmdUtils
 #if Windows
 open Microsoft.Win32
@@ -103,8 +102,4 @@ module ProxyUtils =
 #endif
 
     let HysteriaProxyEnabled (exec: string): bool =
-        let fileName = Path.GetFileNameWithoutExtension(exec)
-        let optProcess = Process.GetProcesses() |> Seq.tryFind (fun p -> p.ProcessName.Contains fileName)
-        match optProcess with
-        | Some _ -> true
-        | None -> false
+        GetProcessByPath(exec).IsSome

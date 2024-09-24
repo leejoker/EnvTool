@@ -1,6 +1,7 @@
 ﻿namespace EnvTool.Services
 
 open System.Diagnostics
+open EnvTool.Utils.SysInfo
 
 module HysteriaService =
 
@@ -29,7 +30,7 @@ module HysteriaService =
         else
             (true, Some(p))
 
-    let KillHysteriaProcess (proc: Option<Process>) =
+    let rec KillHysteriaProcess (proc: Option<Process>) (exec: string) =
         match proc with
         | Some(p) ->
             p.Kill()
@@ -38,4 +39,6 @@ module HysteriaService =
             if p.HasExited |> not then
                 p.Kill()
                 p.WaitForExit(100) |> ignore
-        | None -> ()
+        | None ->
+            let optProcess = GetProcessByPath exec
+            KillHysteriaProcess optProcess exec
