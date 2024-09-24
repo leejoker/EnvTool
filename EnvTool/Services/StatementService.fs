@@ -1,5 +1,6 @@
 ﻿namespace EnvTool.Services
 
+open System
 open System.Diagnostics
 open EnvTool.DataModels
 open EnvTool.Utils.ProxyUtils
@@ -27,7 +28,9 @@ type GlobalStatement() =
         gitProxyEnabled <- GitProxyEnabled()
         systemProxyEnabled <- SystemProxyStatus()
         hysteriaEnabled <- globalProxyConfigModel.HysteriaEnabled = "true"
-        hysteriaProxyEnabled <- HysteriaProxyEnabled(globalProxyConfigModel.HysteriaExec)
+
+        if String.IsNullOrWhiteSpace(globalProxyConfigModel.HysteriaExec) |> not then
+            hysteriaProxyEnabled <- HysteriaProxyEnabled(globalProxyConfigModel.HysteriaExec)
 
     member this.GlobalProxyConfigModel
         with get () = globalProxyConfigModel
