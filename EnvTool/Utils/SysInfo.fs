@@ -60,19 +60,9 @@ module SysInfo =
 #endif
 
     let GetEnvironment name =
-#if Windows
         match Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.User) with
         | null -> None
         | value -> Some value
-#else
-        let profile = GetUserProfile
-        let lines = File.ReadAllLines profile
-        lines |> Array.tryFind (_.StartsWith($"export {name}"))
-        |> fun opt ->
-            match opt with
-            | Some(opt) -> opt.Split("=") |> Array.tryItem 1
-            | None -> None
-#endif
 
     let AddPathValue value origin =
 #if Windows

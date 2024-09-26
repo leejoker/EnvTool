@@ -5,6 +5,9 @@ open EnvTool.Utils.CmdUtils
 #if Windows
 open Microsoft.Win32
 #endif
+#if Linux
+open System.IO
+#endif
 
 module ProxyUtils =
     
@@ -49,7 +52,16 @@ module ProxyUtils =
         value = 1
 #endif
 #if Linux
-        false
+        match GetEnvironment "XDG_CURRENT_DESKTOP" with
+        | Some(deskType) ->
+            if deskType = "KDE" then
+                let kioslaverc = Path.Join([|(GetEnvironment "HOME").Value; ".config"; "kioslaverc"|])
+                let value = RunCmdCommand $"kreadconfig5 --file {kioslaverc} --group \"Proxy Settings\" --key \"ProxyType\""
+                value = "1"
+            else
+                let value = RunCmdCommand $"gsettings get org.gnome.system.proxy mode"
+                value <> "none"
+        | None -> false
 #endif
 #if OSX
         let enabledProxyDevice = NetworkDevicesOSX()
@@ -74,16 +86,29 @@ module ProxyUtils =
         internetSettings.SetValue("ProxyOverride", defaultWindowsProxyIgnore)
 #endif
 #if Linux
-        ()
+        let proxyTypes: string array = [|"http"; "https"|]
+        match GetEnvironment "XDG_CURRENT_DESKTOP" with
+        | Some(deskType) ->
+            proxyTypes |> Seq.iter (fun t ->
+                    if deskType = "KDE" then
+                        let kioslaverc = Path.Join([|(GetEnvironment "HOME").Value; ".config"; "kioslaverc"|])
+                        RunCmdCommand $"kwriteconfig5 --file {kioslaverc} --group \"Proxy Settings\" --key \"ProxyType\" 1" |> ignore
+                        RunCmdCommand $"kwriteconfig5 --file {kioslaverc} --group \"Proxy Settings\" --key \"{t}Proxy\" {t}://{host}:{port}" |> ignore
+                    else
+                        RunCmdCommand $"gsettings set org.gnome.system.proxy mode \"manual\"" |> ignore
+                        RunCmdCommand $"gsettings set org.gnome.system.proxy.{t} host {host}" |> ignore
+                        RunCmdCommand $"gsettings set org.gnome.system.proxy.{t} port {port}" |> ignore
+                )
+        | None -> ()
 #endif
 #if OSX
         NetworkDevicesOSX()
         |> Seq.iter (fun dev ->
-            RunCmdCommand $"/usr/sbin/networksetup -setwebproxystate {dev} on" |> ignore
-            RunCmdCommand $"/usr/sbin/networksetup -setwebproxy {dev} {host} {port}" |> ignore
-            RunCmdCommand $"/usr/sbin/networksetup -setsecurewebproxystate {dev} on" |> ignore
-            RunCmdCommand $"/usr/sbin/networksetup -setsecurewebproxy {dev} {host} {port}" |> ignore
-            )
+             RunCmdCommand $"/usr/sbin/networksetup -setwebproxystate {dev} on" |> ignore
+             RunCmdCommand $"/usr/sbin/networksetup -setwebproxy {dev} {host} {port}" |> ignore
+             RunCmdCommand $"/usr/sbin/networksetup -setsecurewebproxystate {dev} on" |> ignore
+             RunCmdCommand $"/usr/sbin/networksetup -setsecurewebproxy {dev} {host} {port}" |> ignore
+             )
 #endif
 
     let CloseSystemProxy () =
@@ -94,7 +119,14 @@ module ProxyUtils =
         internetSettings.SetValue("ProxyEnable", 0)
 #endif
 #if Linux
-        ()
+        match GetEnvironment "XDG_CURRENT_DESKTOP" with
+        | Some(deskType) ->
+            if deskType = "KDE" then
+                let kioslaverc = Path.Join([|(GetEnvironment "HOME").Value; ".config"; "kioslaverc"|])
+                RunCmdCommand $"kwriteconfig5 --file {kioslaverc} --group \"Proxy Settings\" --key \"ProxyType\" 0" |> ignore
+            else
+                RunCmdCommand $"gsettings set org.gnome.system.proxy mode \"none\"" |> ignore
+        | None -> ()
 #endif
 #if OSX
        NetworkDevicesOSX()
