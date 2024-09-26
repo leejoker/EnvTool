@@ -49,6 +49,7 @@ module ProxyUtils =
         value = 1
 #endif
 #if Linux
+        false
 #endif
 #if OSX
         let enabledProxyDevice = NetworkDevicesOSX()
@@ -73,6 +74,7 @@ module ProxyUtils =
         internetSettings.SetValue("ProxyOverride", defaultWindowsProxyIgnore)
 #endif
 #if Linux
+        ()
 #endif
 #if OSX
         NetworkDevicesOSX()
@@ -92,6 +94,7 @@ module ProxyUtils =
         internetSettings.SetValue("ProxyEnable", 0)
 #endif
 #if Linux
+        ()
 #endif
 #if OSX
        NetworkDevicesOSX()

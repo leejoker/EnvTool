@@ -47,7 +47,7 @@ type MainViewModel() =
 
     member this.HandleHysteriaProxy() =
         if globalStatement.HysteriaProxyEnabled then
-            let (result, proc) =
+            let result, proc =
                 StartHysteriaProcess
                     globalStatement.GlobalProxyConfigModel.HysteriaExec
                     globalStatement.GlobalProxyConfigModel.HysteriaConfig
