@@ -110,9 +110,69 @@ module SysInfo =
     let HostAddresses () =
         IPAddresses() @ DNSAddresses()
         
+    let CurrentExeName () =
+        let exeName = AppDomain.CurrentDomain.FriendlyName
+#if Windows
+        $"{exeName}.exe"
+#endif
+#if Linux
+        exeName
+#endif
+#if OSX
+        exeName
+#endif
+    
     let CurrentWorkDir () =
         AppDomain.CurrentDomain.BaseDirectory
     
     let GetProcessByPath(path: string): Option<Process> =
         let fileName = Path.GetFileNameWithoutExtension(path)
         Process.GetProcesses() |> Seq.tryFind (fun p -> p.ProcessName.Contains fileName)
+        
+    let GetApplicationBootUp (appName: string): bool =
+#if Windows
+        let applicationStartUpKey =
+            Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true)
+        if isNull applicationStartUpKey then
+            false
+        else
+           not (isNull (applicationStartUpKey.GetValue(appName)))
+#endif
+#if Linux
+        ()
+#endif
+#if OSX
+        ()
+#endif
+    
+    let SetApplicationBootUp (appName: string) (appPath: string) =
+#if Windows
+        let applicationStartUpKey =
+            Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true)
+        if isNull applicationStartUpKey then
+            ()
+        else
+           applicationStartUpKey.SetValue(appName, appPath) 
+#endif
+#if Linux
+        ()
+#endif
+#if OSX
+        ()
+#endif
+
+    let RemoveApplicationBootUp (appName: string) =
+#if Windows
+        let applicationStartUpKey =
+            Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true)
+        if isNull applicationStartUpKey then
+            ()
+        else
+           applicationStartUpKey.DeleteValue(appName, false) 
+#endif
+#if Linux
+        ()
+#endif
+#if OSX
+        ()
+#endif

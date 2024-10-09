@@ -2,6 +2,7 @@
 
 open EnvTool.Services
 open EnvTool.Utils.ProxyUtils
+open EnvTool.Utils.SysInfo
 open EnvTool.Services.HysteriaService
 
 type MainViewModel() =
@@ -21,6 +22,10 @@ type MainViewModel() =
         with get () = globalStatement.GitProxyEnabled
         and set v = globalStatement.GitProxyEnabled <- v
 
+    member this.BootUpEnabled
+        with get () = globalStatement.BootUpEnabled
+        and set v = globalStatement.BootUpEnabled <- v
+
     member this.SystemProxyEnabled
         with get () = globalStatement.SystemProxyEnabled
         and set v = globalStatement.SystemProxyEnabled <- v
@@ -32,6 +37,12 @@ type MainViewModel() =
     member this.HysteriaEnabled
         with get () = globalStatement.HysteriaEnabled
         and set v = globalStatement.HysteriaEnabled <- v
+
+    member this.HandleBootUp() =
+        if globalStatement.BootUpEnabled then
+            SetApplicationBootUp globalStatement.AppName ($"{CurrentWorkDir()}{CurrentExeName()}")
+        else
+            RemoveApplicationBootUp globalStatement.AppName
 
     member this.HandleSystemProxy() =
         if globalStatement.SystemProxyEnabled then

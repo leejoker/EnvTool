@@ -4,14 +4,20 @@ open System
 open System.Diagnostics
 open EnvTool.DataModels
 open EnvTool.Utils.ProxyUtils
+open EnvTool.Utils.SysInfo
 
 type GlobalStatement() =
+
+    let appName = "EnvTool"
+
     let proxyConfigService = ProxyConfigService()
 
     let mutable globalProxyConfigModel: ProxyConfigModel =
         Unchecked.defaultof<ProxyConfigModel>
 
     let mutable globalHysteriaProcess: Option<Process> = None
+
+    let mutable bootUpEnabled: bool = Unchecked.defaultof<bool>
 
     let mutable gitProxyEnabled: bool = Unchecked.defaultof<bool>
 
@@ -25,12 +31,15 @@ type GlobalStatement() =
         if globalProxyConfigModel = Unchecked.defaultof<ProxyConfigModel> then
             globalProxyConfigModel <- proxyConfigService.LoadConfig()
 
+        bootUpEnabled <- GetApplicationBootUp appName
         gitProxyEnabled <- GitProxyEnabled()
         systemProxyEnabled <- SystemProxyStatus()
         hysteriaEnabled <- globalProxyConfigModel.HysteriaEnabled = "true"
 
         if String.IsNullOrWhiteSpace(globalProxyConfigModel.HysteriaExec) |> not then
             hysteriaProxyEnabled <- HysteriaProxyEnabled(globalProxyConfigModel.HysteriaExec)
+
+    member this.AppName = appName
 
     member this.GlobalProxyConfigModel
         with get () = globalProxyConfigModel
@@ -39,6 +48,10 @@ type GlobalStatement() =
     member this.GlobalHysteriaProcess
         with get () = globalHysteriaProcess
         and set v = globalHysteriaProcess <- v
+
+    member this.BootUpEnabled
+        with get () = bootUpEnabled
+        and set v = bootUpEnabled <- v
 
     member this.GitProxyEnabled
         with get () = gitProxyEnabled
