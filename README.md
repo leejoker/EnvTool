@@ -5,15 +5,14 @@ This is a environment toolbox for Windows, Linux and MacOS.
 ## TODO
 
 - [x] minimize to system tray
-- [ ] Boot with the system
-- [ ] change default window location to right bottom
+- [x] Boot with the system
 - [ ] save statements when exit
 - [x] global statements management
 
 ## System Proxy
 
 - [x] add system proxy switch
-- [ ] add default ip addresses ignore
+- [x] add default ip addresses ignore
 
 ## Tools Proxy
 
