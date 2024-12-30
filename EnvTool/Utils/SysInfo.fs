@@ -7,7 +7,9 @@ open System.Net.NetworkInformation
 open System.Runtime.InteropServices
 open System
 open Microsoft.FSharp.Collections
+#if Windows
 open Microsoft.Win32
+#endif
 
 module SysInfo =
     let SysArch = (fun () ->
@@ -123,7 +125,13 @@ module SysInfo =
 #endif
     
     let CurrentWorkDir () =
+#if Windows        
         AppDomain.CurrentDomain.BaseDirectory
+#else
+        match Environment.GetEnvironmentVariable("HOME") with
+        | null -> ""
+        | value -> Path.Join(value, ".envtool/")
+#endif
     
     let GetProcessByPath(path: string): Option<Process> =
         let fileName = Path.GetFileNameWithoutExtension(path)
@@ -139,10 +147,10 @@ module SysInfo =
            not (isNull (applicationStartUpKey.GetValue(appName)))
 #endif
 #if Linux
-        ()
+        false
 #endif
 #if OSX
-        ()
+        false
 #endif
     
     let SetApplicationBootUp (appName: string) (appPath: string) =
@@ -155,10 +163,10 @@ module SysInfo =
            applicationStartUpKey.SetValue(appName, appPath) 
 #endif
 #if Linux
-        ()
+        false
 #endif
 #if OSX
-        ()
+        false
 #endif
 
     let RemoveApplicationBootUp (appName: string) =
@@ -171,8 +179,8 @@ module SysInfo =
            applicationStartUpKey.DeleteValue(appName, false) 
 #endif
 #if Linux
-        ()
+        false
 #endif
 #if OSX
-        ()
+        false
 #endif
