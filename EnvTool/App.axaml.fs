@@ -26,19 +26,22 @@ type App() =
         base.OnFrameworkInitializationCompleted()
 
     member this.ShowOrHide (sender: obj) (args: EventArgs) =
-        let desktop = this.ApplicationLifetime :?> IClassicDesktopStyleApplicationLifetime
+        match this.ApplicationLifetime with
+        | :? IClassicDesktopStyleApplicationLifetime as desktop ->
+            if not MainWindow.HideState then
+                desktop.Windows |> Seq.iter (fun (w: Window) -> w.Hide())
+                MainWindow.HideState <- true
+            else
+                desktop.Windows
+                |> Seq.iter (fun (w: Window) ->
+                    w.Show()
+                    w.WindowState <- WindowState.Normal)
 
-        if not MainWindow.HideState then
-            desktop.Windows |> Seq.iter (fun (w: Window) -> w.Hide())
-            MainWindow.HideState <- true
-        else
-            desktop.Windows
-            |> Seq.iter (fun (w: Window) ->
-                w.Show()
-                w.WindowState <- WindowState.Normal)
+                MainWindow.HideState <- false
+        | _ -> ()
 
-            MainWindow.HideState <- false
 
     member this.Exit (sender: obj) (args: EventArgs) =
-        let desktop = this.ApplicationLifetime :?> IClassicDesktopStyleApplicationLifetime
-        desktop.TryShutdown() |> ignore
+        match this.ApplicationLifetime with
+        | :? IClassicDesktopStyleApplicationLifetime as desktop -> desktop.Shutdown()
+        | _ -> ()

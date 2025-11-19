@@ -3,7 +3,7 @@
 open System
 open Avalonia
 open Avalonia.Logging
-open Avalonia.ReactiveUI
+open ReactiveUI.Avalonia
 open EnvTool
 
 module Program =
@@ -15,6 +15,8 @@ module Program =
             .WithInterFont()
             .LogToTrace(LogEventLevel.Debug, LogArea.Property, LogArea.Layout, LogArea.Binding)
             .UseReactiveUI()
+            .UseWin32()
+            .UseSkia()
 
     [<EntryPoint; STAThread>]
     let main argv =

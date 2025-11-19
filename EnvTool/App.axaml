@@ -9,7 +9,7 @@
             <TrayIcon Icon="/Assets/logo.ico" Clicked="ShowOrHide">
                 <TrayIcon.Menu>
                     <NativeMenu>
-                        <NativeMenuItem Header="Exit EnvTool" Click="Exit" />
+                        <NativeMenuItem Header="Exit" Click="Exit" />
                     </NativeMenu>
                 </TrayIcon.Menu>
             </TrayIcon>
