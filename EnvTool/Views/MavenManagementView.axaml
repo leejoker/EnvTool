@@ -1,0 +1,98 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="450"
+             xmlns:vm="using:EnvTool.ViewModels"
+             x:DataType="vm:MavenManagementViewModel"
+             x:Class="EnvTool.Views.MavenManagementView">
+    <UserControl.Styles>
+        <Style Selector="Button">
+            <Setter Property="FontFamily" Value="微软雅黑" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Width" Value="100" />
+            <Setter Property="Height" Value="30" />
+        </Style>
+        <Style Selector="Button.back">
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="5 0 0 0" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Width" Value="40" />
+        </Style>
+        <Style Selector="TextBlock">
+            <Setter Property="FontFamily" Value="微软雅黑" />
+        </Style>
+        <Style Selector="TabControl">
+            <Setter Property="Margin" Value="0 0 0 10" />
+        </Style>
+        <Style Selector="TabControl TabItem">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontFamily" Value="微软雅黑" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+        <Style Selector="DataGrid">
+            <Setter Property="FontFamily" Value="微软雅黑" />
+        </Style>
+    </UserControl.Styles>
+
+    <DockPanel>
+        <!-- Top: Header with back button and current version -->
+        <DockPanel Dock="Top" Height="40" LastChildFill="False">
+            <Button Classes="back"
+                    Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).BackToProxyConfig}">
+                &lt;
+            </Button>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10 0 0 0">
+                <TextBlock FontWeight="Bold">
+                    <Run Text="Maven: " />
+                    <Run Text="{Binding CurrentVersion}" />
+                </TextBlock>
+                <TextBlock FontWeight="Bold" Margin="20 0 0 0">
+                    <Run Text="MAVEN_HOME: " />
+                    <Run Text="{Binding MavenHome}" />
+                </TextBlock>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- Bottom: Action buttons -->
+        <DockPanel Dock="Bottom" Height="40" LastChildFill="False">
+            <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Button Content="保存设置" Command="{Binding SaveSettingsCommand}" />
+                <Button Content="刷新" Command="{Binding LoadDataCommand}" />
+            </StackPanel>
+        </DockPanel>
+
+        <!-- Middle: TabControl with two tabs -->
+        <TabControl>
+            <TabItem Header="源管理">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Spacing="10" Margin="0 10 0 0">
+                        <Button Content="删除" Command="{Binding RemoveSourceCommand}" />
+                        <Button Content="设为默认" Command="{Binding SetDefaultSourceCommand}" />
+                    </StackPanel>
+                    <DataGrid ItemsSource="{Binding Sources}"
+                              SelectedItem="{Binding SelectedSource}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserResizeColumns="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="名称" Binding="{Binding Name}" Width="120" />
+                            <DataGridTextColumn Header="URL" Binding="{Binding Url}" Width="*" />
+                            <DataGridTextColumn Header="默认" Binding="{Binding IsDefault}" Width="60" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+            </TabItem>
+            <TabItem Header="settings.xml">
+                <TextBox Text="{Binding SettingsContent}"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto"
+                         HorizontalScrollBarVisibility="Auto" />
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</UserControl>
