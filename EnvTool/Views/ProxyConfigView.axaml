@@ -90,7 +90,7 @@
             <TabItem Header="Java">
                 <StackPanel Classes="body">
                     <Button Content="JDK Management" Classes="bar" Click="OpenJdkMgmtWin" />
-                    <Button Content="Maven Management" Classes="bar" />
+                    <Button Content="Maven Management" Classes="bar" Click="OpenMavenMgmtWin" />
                 </StackPanel>
             </TabItem>
             <TabItem Header="Hysteria" IsVisible="{Binding HysteriaEnabled}">

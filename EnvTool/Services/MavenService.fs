@@ -165,6 +165,7 @@ module MavenService =
                         let existingId = m.Attribute("id") |> Option.ofObj |> Option.map (fun a -> a.Value)
                         if existingId = Some("central") then
                             m.Attribute("id").Remove()
+                    )
 
                     // Find the mirror with the given id and add central id to it
                     let targetMirror =

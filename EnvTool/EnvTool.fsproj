@@ -38,6 +38,7 @@
         <Compile Include="Services\ProxyConfigService.fs"/>
         <Compile Include="Services\JpvmService.fs"/>
         <Compile Include="Services\HysteriaService.fs" />
+        <Compile Include="Services\MavenService.fs" />
         <Compile Include="Services\StatementService.fs" />
         <Compile Include="ViewModels\Utils\MessageBoxUtils.fs"/>
         <Compile Include="ViewModels\ViewModelBase.fs"/>
@@ -46,12 +47,14 @@
         <Compile Include="ViewModels\MainViewModel.fs"/>
         <Compile Include="ViewModels\MainWindowViewModel.fs"/>
         <Compile Include="ViewModels\JavaConfigWindowViewModel.fs"/>
+        <Compile Include="ViewModels\MavenManagementViewModel.fs"/>
         <Compile Include="ViewLocator.fs"/>
     </ItemGroup>
 
     <ItemGroup>
         <Compile Include="Views\JdkManagementView.axaml.fs"/>
         <Compile Include="Views\JavaConfigWindow.axaml.fs"/>
+        <Compile Include="Views\MavenManagementWindow.axaml.fs"/>
         <Compile Include="Views\ProxyConfigView.axaml.fs"/>
         <Compile Include="Views\MainView.axaml.fs"/>
         <Compile Include="Views\MainWindow.axaml.fs"/>

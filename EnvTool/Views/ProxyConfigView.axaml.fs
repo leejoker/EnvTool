@@ -16,3 +16,7 @@ type ProxyConfigView() as this =
     member this.OpenJdkMgmtWin (sender: obj) (args: RoutedEventArgs) =
         let win = JavaConfigWindow(DataContext = JavaConfigWindowViewModel())
         win.Show()
+
+    member this.OpenMavenMgmtWin (sender: obj) (args: RoutedEventArgs) =
+        let win = MavenManagementWindow(DataContext = MavenManagementViewModel())
+        win.Show()
