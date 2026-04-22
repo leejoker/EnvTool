@@ -31,7 +31,7 @@ EnvTool/
 │   ├── MavenManagementView.axaml.fs        # 新建：代码后端
 │   ├── JavaConfigWindow.axaml              # 修改：更新 Title
 │   └── ProxyConfigView.axaml.fs            # 修改：添加 Maven 按钮点击处理
-└── EnvTool.fsproj                          # 修改：添加新文件
+└── EnvTool.fsproj                          # 修改：添加 .fs 文件（axaml 自动处理）
 ```
 
 ---
@@ -639,7 +639,25 @@ git commit -m "feat: connect Maven Management button to MavenManagementWindow"
 **Files:**
 - Modify: `EnvTool/EnvTool.fsproj`
 
-- [ ] **Step 1: 添加新文件到 ItemGroup**
+**注意：** `.axaml` 文件由 Avalonia build targets 自动处理，无需添加。仅 `.fs` 文件需要显式添加。
+
+- [ ] **Step 1: 添加 MavenService.fs**
+
+在 `<Compile Include="Services\StatementService.fs" />` 后添加：
+
+```xml
+<Compile Include="Services\MavenService.fs" />
+```
+
+- [ ] **Step 2: 添加 MavenManagementViewModel.fs**
+
+在 `<Compile Include="ViewModels\JavaConfigWindowViewModel.fs"/>` 后添加：
+
+```xml
+<Compile Include="ViewModels\MavenManagementViewModel.fs"/>
+```
+
+- [ ] **Step 3: 添加 MavenManagementView.axaml.fs 和 MavenManagementWindow.axaml.fs**
 
 在 `<Compile Include="Views\JdkManagementView.axaml.fs"/>` 后添加：
 
@@ -648,11 +666,11 @@ git commit -m "feat: connect Maven Management button to MavenManagementWindow"
 <Compile Include="Views\MavenManagementWindow.axaml.fs"/>
 ```
 
-- [ ] **Step 2: 提交**
+- [ ] **Step 4: 提交**
 
 ```bash
 git add EnvTool/EnvTool.fsproj
-git commit -m "build: add MavenManagement files to project"
+git commit -m "build: add MavenService and MavenManagementViewModel to project"
 ```
 
 ---
