@@ -33,25 +33,18 @@
             <Setter Property="FontFamily" Value="微软雅黑" />
             <Setter Property="FontWeight" Value="Bold" />
         </Style>
-        <Style Selector="DataGrid">
-            <Setter Property="FontFamily" Value="微软雅黑" />
-        </Style>
     </UserControl.Styles>
 
     <DockPanel>
-        <!-- Top: Header with back button and current version -->
         <DockPanel Dock="Top" Height="40" LastChildFill="False">
             <Button Classes="back"
-                    Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).BackToProxyConfig}">
+                    Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).BackToMainView}">
                 &lt;
             </Button>
-            <TextBlock VerticalAlignment="Center" Margin="10 0 0 0" FontWeight="Bold">
-                <Run Text="Current JDK: " />
-                <Run Text="{Binding CurrentVersion}" />
-            </TextBlock>
+            <TextBlock VerticalAlignment="Center" Margin="10 0 0 0" FontWeight="Bold"
+                       Text="{Binding CurrentVersion, StringFormat='Current JDK: {0}'}" />
         </DockPanel>
 
-        <!-- Bottom: Action buttons -->
         <DockPanel Dock="Bottom" Height="40" LastChildFill="False">
             <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Button Content="安装" Command="{Binding InstallSelectedCommand}" IsEnabled="{Binding !IsLoading}" />
@@ -61,34 +54,33 @@
             </StackPanel>
         </DockPanel>
 
-        <!-- Middle: TabControl with two tabs -->
         <TabControl>
             <TabItem Header="本地版本">
-                <DataGrid ItemsSource="{Binding InstalledJdks}"
-                          SelectedItem="{Binding SelectedJdk}"
-                          AutoGenerateColumns="False"
-                          IsReadOnly="True"
-                          CanUserResizeColumns="True">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="发行版" Binding="{Binding Distro}" Width="100" />
-                        <DataGridTextColumn Header="版本" Binding="{Binding Version}" Width="150" />
-                        <DataGridTextColumn Header="路径" Binding="{Binding Path}" Width="*" />
-                        <DataGridTextColumn Header="当前" Binding="{Binding IsCurrent}" Width="60" />
-                    </DataGrid.Columns>
-                </DataGrid>
+                <ListBox ItemsSource="{Binding InstalledJdks}" SelectedItem="{Binding SelectedJdk}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="vm:JdkItem">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <TextBlock Text="{Binding Distro}" Width="100" />
+                                <TextBlock Text="{Binding Version}" Width="150" />
+                                <TextBlock Text="{Binding Path}" Width="300" />
+                                <TextBlock Text="{Binding IsCurrent}" Width="60" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </TabItem>
             <TabItem Header="可安装版本">
-                <DataGrid ItemsSource="{Binding AvailableJdks}"
-                          SelectedItem="{Binding SelectedJdk}"
-                          AutoGenerateColumns="False"
-                          IsReadOnly="True"
-                          CanUserResizeColumns="True">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="发行版" Binding="{Binding Distro}" Width="100" />
-                        <DataGridTextColumn Header="版本" Binding="{Binding Version}" Width="150" />
-                        <DataGridTextColumn Header="路径" Binding="{Binding Path}" Width="*" />
-                    </DataGrid.Columns>
-                </DataGrid>
+                <ListBox ItemsSource="{Binding AvailableJdks}" SelectedItem="{Binding SelectedJdk}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="vm:JdkItem">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <TextBlock Text="{Binding Distro}" Width="100" />
+                                <TextBlock Text="{Binding Version}" Width="150" />
+                                <TextBlock Text="{Binding Path}" Width="300" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </TabItem>
         </TabControl>
     </DockPanel>

@@ -33,31 +33,20 @@
             <Setter Property="FontFamily" Value="微软雅黑" />
             <Setter Property="FontWeight" Value="Bold" />
         </Style>
-        <Style Selector="DataGrid">
-            <Setter Property="FontFamily" Value="微软雅黑" />
-        </Style>
     </UserControl.Styles>
 
     <DockPanel>
-        <!-- Top: Header with back button and current version -->
         <DockPanel Dock="Top" Height="40" LastChildFill="False">
             <Button Classes="back"
-                    Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).BackToProxyConfig}">
+                    Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).BackToMainView}">
                 &lt;
             </Button>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10 0 0 0">
-                <TextBlock FontWeight="Bold">
-                    <Run Text="Maven: " />
-                    <Run Text="{Binding CurrentVersion}" />
-                </TextBlock>
-                <TextBlock FontWeight="Bold" Margin="20 0 0 0">
-                    <Run Text="MAVEN_HOME: " />
-                    <Run Text="{Binding MavenHome}" />
-                </TextBlock>
+                <TextBlock FontWeight="Bold" Text="{Binding CurrentVersion, StringFormat='Maven: {0}'}" />
+                <TextBlock FontWeight="Bold" Margin="20 0 0 0" Text="{Binding MavenHome, StringFormat='MAVEN_HOME: {0}'}" />
             </StackPanel>
         </DockPanel>
 
-        <!-- Bottom: Action buttons -->
         <DockPanel Dock="Bottom" Height="40" LastChildFill="False">
             <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Button Content="保存设置" Command="{Binding SaveSettingsCommand}" />
@@ -65,7 +54,6 @@
             </StackPanel>
         </DockPanel>
 
-        <!-- Middle: TabControl with two tabs -->
         <TabControl>
             <TabItem Header="源管理">
                 <DockPanel>
@@ -73,25 +61,23 @@
                         <Button Content="删除" Command="{Binding RemoveSourceCommand}" />
                         <Button Content="设为默认" Command="{Binding SetDefaultSourceCommand}" />
                     </StackPanel>
-                    <DataGrid ItemsSource="{Binding Sources}"
-                              SelectedItem="{Binding SelectedSource}"
-                              AutoGenerateColumns="False"
-                              IsReadOnly="True"
-                              CanUserResizeColumns="True">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="名称" Binding="{Binding Name}" Width="120" />
-                            <DataGridTextColumn Header="URL" Binding="{Binding Url}" Width="*" />
-                            <DataGridTextColumn Header="默认" Binding="{Binding IsDefault}" Width="60" />
-                        </DataGrid.Columns>
-                    </DataGrid>
+                    <ListBox ItemsSource="{Binding Sources}" SelectedItem="{Binding SelectedSource}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="vm:MavenSourceItem">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <TextBlock Text="{Binding Name}" Width="120" />
+                                    <TextBlock Text="{Binding Url}" Width="300" />
+                                    <TextBlock Text="{Binding IsDefault}" Width="60" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </DockPanel>
             </TabItem>
             <TabItem Header="settings.xml">
                 <TextBox Text="{Binding SettingsContent}"
                          AcceptsReturn="True"
-                         TextWrapping="Wrap"
-                         VerticalScrollBarVisibility="Auto"
-                         HorizontalScrollBarVisibility="Auto" />
+                         TextWrapping="Wrap" />
             </TabItem>
         </TabControl>
     </DockPanel>

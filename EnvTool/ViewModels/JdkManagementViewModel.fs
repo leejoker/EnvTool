@@ -3,13 +3,14 @@ namespace EnvTool.ViewModels
 open System
 open System.Collections.ObjectModel
 open System.IO
+open System.Windows.Input
 open EnvTool.Services
 open Newtonsoft.Json.Linq
 open ReactiveUI
 
 type JdkItem = { Distro: string; Version: string; Path: string; IsCurrent: bool }
 
-type JdkManagementViewModel() =
+type JdkManagementViewModel() as this =
     inherit ViewModelBase()
 
     let installedJdks = ObservableCollection<JdkItem>()
@@ -19,6 +20,18 @@ type JdkManagementViewModel() =
     let mutable isLoading = false
 
     let mutable availableVersionList: JObject option = None
+
+    let installCmd = ReactiveCommand.Create(Action(this.InstallSelected))
+    let useCmd = ReactiveCommand.Create(Action(this.UseSelected))
+    let removeCmd = ReactiveCommand.Create(Action(this.RemoveSelected))
+    let refreshCmd = ReactiveCommand.Create(Action(this.RefreshInstalled))
+    let loadAvailCmd = ReactiveCommand.Create(Action(this.LoadAvailableJdks))
+
+    member this.InstallSelectedCommand: ICommand = installCmd
+    member this.UseSelectedCommand: ICommand = useCmd
+    member this.RemoveSelectedCommand: ICommand = removeCmd
+    member this.RefreshInstalledCommand: ICommand = refreshCmd
+    member this.LoadAvailableJdksCommand: ICommand = loadAvailCmd
 
     member this.InstalledJdks: ObservableCollection<JdkItem> = installedJdks
     member this.AvailableJdks: ObservableCollection<JdkItem> = availableJdks
@@ -113,7 +126,7 @@ type JdkManagementViewModel() =
         try
             availableJdks.Clear()
 
-            let progress = { new IProgress<double> with member __.Progress _ = () }
+            let progress = { new IProgress<double> with member __.Report(_) = () }
             JpvmModule.DownloadVersionList(progress)
 
             if File.Exists(JpvmModule.VERSION_PATH) then
@@ -152,7 +165,7 @@ type JdkManagementViewModel() =
         | Some(jdk) when String.IsNullOrEmpty(jdk.Path) ->
             // This is an available JDK to install
             let jdkInfo = { JdkVersionInfo.distro = jdk.Distro; JdkVersionInfo.version = jdk.Version }
-            let progress = { new IProgress<double> with member __.Progress _ = () }
+            let progress = { new IProgress<double> with member __.Report(_) = () }
 
             try
                 this.IsLoading <- true

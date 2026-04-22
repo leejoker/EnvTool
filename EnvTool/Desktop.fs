@@ -12,9 +12,7 @@ module Program =
         AppBuilder
             .Configure<App>()
             .UsePlatformDetect()
-            .WithInterFont()
-            .LogToTrace(LogEventLevel.Debug, LogArea.Property, LogArea.Layout, LogArea.Binding)
-            .UseReactiveUI()
+            .UseReactiveUI(fun _ -> ())
             .UseWin32()
             .UseSkia()
 

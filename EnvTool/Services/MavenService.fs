@@ -77,16 +77,19 @@ module MavenService =
         | Some(content) ->
             try
                 let doc = XDocument.Parse(content)
-                let mirrors = doc.Descendants("mirrors") |> Seq.headOrNone
+                let mirrorsElement = doc.Descendants("mirrors") |> Seq.tryHead
 
-                match mirrors with
-                | Some(mirrorsElement) ->
-                    mirrorsElement.Elements("mirror")
-                    |> Seq.map (fun m ->
-                        let id = m.Attribute("id") |> Option.ofObj |> Option.defaultValue ""
-                        let name = m.Attribute("name") |> Option.ofObj |> Option.defaultValue ""
-                        let url = m.Element("url") |> Option.ofObj |> Option.defaultValue ""
-                        let isDefault = m.Attribute("id") |> Option.ofObj |> Option.map (fun a -> a.Value = "central") |> Option.defaultValue false
+                match mirrorsElement with
+                | Some(mirrors) ->
+                    mirrors.Elements("mirror")
+                    |> Seq.map (fun (m: XElement) ->
+                        let idAttr = m.Attribute(XName.Get("id"))
+                        let nameAttr = m.Attribute(XName.Get("name"))
+                        let urlElem = m.Element(XName.Get("url"))
+                        let id = if idAttr <> null then idAttr.Value else ""
+                        let name = if nameAttr <> null then nameAttr.Value else ""
+                        let url = if urlElem <> null then urlElem.Value else ""
+                        let isDefault = idAttr <> null && idAttr.Value = "central"
                         { Id = id; Name = name; Url = url; IsDefault = isDefault })
                     |> Seq.toList
                 | None -> getDefaultSources()

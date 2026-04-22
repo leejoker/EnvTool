@@ -2,6 +2,7 @@ namespace EnvTool.ViewModels
 
 open System
 open System.Collections.ObjectModel
+open System.Windows.Input
 open EnvTool.Services
 open ReactiveUI
 
@@ -12,7 +13,7 @@ type MavenSourceItem = {
     IsDefault: bool
 }
 
-type MavenManagementViewModel() =
+type MavenManagementViewModel() as this =
     inherit ViewModelBase()
 
     let mutable currentVersion = ""
@@ -20,6 +21,16 @@ type MavenManagementViewModel() =
     let mutable settingsContent = ""
     let mutable selectedSource: MavenSourceItem option = None
     let sources = ObservableCollection<MavenSourceItem>()
+
+    let loadDataCmd = ReactiveCommand.Create(Action(this.LoadData))
+    let saveSettingsCmd = ReactiveCommand.Create(Action(this.SaveSettings))
+    let removeSourceCmd = ReactiveCommand.Create(Action(this.RemoveSource))
+    let setDefaultSourceCmd = ReactiveCommand.Create(Action(this.SetDefaultSource))
+
+    member this.LoadDataCommand: ICommand = loadDataCmd
+    member this.SaveSettingsCommand: ICommand = saveSettingsCmd
+    member this.RemoveSourceCommand: ICommand = removeSourceCmd
+    member this.SetDefaultSourceCommand: ICommand = setDefaultSourceCmd
 
     member this.CurrentVersion
         with get () = currentVersion
@@ -40,37 +51,39 @@ type MavenManagementViewModel() =
     member this.Sources: ObservableCollection<MavenSourceItem> = sources
 
     member this.LoadData() =
-        // Load Maven version
         this.CurrentVersion <-
             match MavenService.GetVersion() with
             | Some(v) -> v
             | None -> "Not found"
 
-        // Load Maven home
         this.MavenHome <-
             match MavenService.GetMavenHome() with
             | Some(h) -> h
             | None -> "Not configured"
 
-        // Load settings content
         this.SettingsContent <-
             match MavenService.GetSettingsContent() with
             | Some(c) -> c
             | None -> ""
 
-        // Load sources
         sources.Clear()
         MavenService.GetSources()
-        |> List.iter (fun s -> sources.Add(s))
+        |> List.iter (fun (s: MavenSource) ->
+            let item = { Id = s.Id; Name = s.Name; Url = s.Url; IsDefault = s.IsDefault }
+            sources.Add(item))
 
     member this.SaveSettings() =
         MavenService.SaveSettings(this.SettingsContent)
 
     member this.AddSource(id: string, name: string, url: string) =
         let source = { Id = id; Name = name; Url = url; IsDefault = false }
-        if MavenService.AddSource(source) then
+        let mavenSource: MavenSource = { Id = source.Id; Name = source.Name; Url = source.Url; IsDefault = source.IsDefault }
+        if MavenService.AddSource(mavenSource) then
             sources.Clear()
-            MavenService.GetSources() |> List.iter (fun s -> sources.Add(s))
+            MavenService.GetSources()
+            |> List.iter (fun (s: MavenSource) ->
+                let item = { Id = s.Id; Name = s.Name; Url = s.Url; IsDefault = s.IsDefault }
+                sources.Add(item))
 
     member this.RemoveSource() =
         match selectedSource with
@@ -78,7 +91,10 @@ type MavenManagementViewModel() =
         | Some(source) ->
             if MavenService.RemoveSource(source.Id) then
                 sources.Clear()
-                MavenService.GetSources() |> List.iter (fun s -> sources.Add(s))
+                MavenService.GetSources()
+                |> List.iter (fun (s: MavenSource) ->
+                    let item = { Id = s.Id; Name = s.Name; Url = s.Url; IsDefault = s.IsDefault }
+                    sources.Add(item))
                 this.SelectedSource <- None
 
     member this.SetDefaultSource() =
@@ -87,4 +103,7 @@ type MavenManagementViewModel() =
         | Some(source) ->
             if MavenService.SetDefaultSource(source.Id) then
                 sources.Clear()
-                MavenService.GetSources() |> List.iter (fun s -> sources.Add(s))
+                MavenService.GetSources()
+                |> List.iter (fun (s: MavenSource) ->
+                    let item = { Id = s.Id; Name = s.Name; Url = s.Url; IsDefault = s.IsDefault }
+                    sources.Add(item))
