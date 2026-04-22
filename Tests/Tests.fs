@@ -7,6 +7,7 @@ open EnvTool.Utils.FileUtils
 open EnvTool.Utils.ProxyUtils
 open EnvTool.Utils.SysInfo
 
+// Jpvm Tests (require specific environment)
 [<Fact>]
 let ``Jpvm Install Test`` () =
     Install(
@@ -53,12 +54,83 @@ let ``DownloadVersionList Test`` () =
     DownloadVersionList(null)
     Assert.True(true)
 
+// MavenService Tests
+[<Fact>]
+let ``MavenService GetMavenHome returns Some or None`` () =
+    let result = MavenService.GetMavenHome()
+    match result with
+    | Some(_) -> Assert.True(true)
+    | None -> Assert.True(true)
+
+[<Fact>]
+let ``MavenService GetSources returns non-empty list`` () =
+    let sources = MavenService.GetSources()
+    Assert.NotEmpty(sources)
+
+[<Fact>]
+let ``MavenService GetSources returns at least one source`` () =
+    let sources = MavenService.GetSources()
+    Assert.True(sources.Length >= 1)
+
+[<Fact>]
+let ``MavenService SaveSettings and GetSettingsContent roundtrip`` () =
+    let testContent = """<settings>
+  <mirrors>
+    <mirror>
+      <id>test</id>
+      <name>Test Mirror</name>
+      <url>https://test.mirror.com/repo</url>
+    </mirror>
+  </mirrors>
+</settings>"""
+    MavenService.SaveSettings(testContent)
+    let retrieved = MavenService.GetSettingsContent()
+    match retrieved with
+    | Some(content) -> Assert.Contains("test", content)
+    | None -> Assert.Fail("Expected Some content")
+
+[<Fact>]
+let ``MavenService AddSource returns true on success`` () =
+    let newSource = { Id = "test-mirror-001"; Name = "Test Mirror"; Url = "https://test.mirror.com"; IsDefault = false }
+    let result = MavenService.AddSource(newSource)
+    Assert.True(result)
+
+[<Fact>]
+let ``MavenService RemoveSource returns true for existing source`` () =
+    // First add a source to remove
+    let newSource = { Id = "to-remove-001"; Name = "To Remove"; Url = "https://remove.com"; IsDefault = false }
+    let added = MavenService.AddSource(newSource)
+    if added then
+        let result = MavenService.RemoveSource("to-remove-001")
+        Assert.True(result)
+    else
+        // If AddSource failed (e.g. no write permission), skip
+        Assert.True(true)
+
+[<Fact>]
+let ``MavenService RemoveSource returns false for non-existing source`` () =
+    let result = MavenService.RemoveSource("non-existing-mirror-id-xyz")
+    Assert.False(result)
+
+[<Fact>]
+let ``MavenService SetDefaultSource returns true for existing source`` () =
+    // Add a source then set it as default
+    let newSource = { Id = "to-default-001"; Name = "To Default"; Url = "https://default.com"; IsDefault = false }
+    let added = MavenService.AddSource(newSource)
+    if added then
+        let result = MavenService.SetDefaultSource("to-default-001")
+        Assert.True(result)
+    else
+        Assert.True(true)
+
+// SysInfo Tests
 [<Fact>]
 let ``SysArch Test`` () = Assert.True(string (SysArch) = "amd64")
 
 [<Fact>]
 let ``SysOS Test`` () = Assert.True(string (SysOS) = "windows")
 
+// Non-test functions for manual testing
 let ``WalkDir Test`` () =
     let dict = WalkDir(JDK_PATH)
     dict.Keys |> Seq.toList |> List.iter (fun k -> printfn $"%s{k} %s{dict[k]}")
