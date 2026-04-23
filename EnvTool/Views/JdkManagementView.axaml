@@ -37,10 +37,6 @@
 
     <DockPanel>
         <DockPanel Dock="Top" Height="40" LastChildFill="False">
-            <Button Classes="back"
-                    Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).BackToMainView}">
-                &lt;
-            </Button>
             <TextBlock VerticalAlignment="Center" Margin="10 0 0 0" FontWeight="Bold"
                        Text="{Binding CurrentVersion, StringFormat='Current JDK: {0}'}" />
         </DockPanel>

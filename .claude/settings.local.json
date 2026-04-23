@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet restore *)",
+      "Bash(dotnet build *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "mcp__plugin_claude-mem_mcp-search__smart_outline",
+      "Bash(git stash *)",
+      "Bash(dotnet test *)",
+      "Bash(taskkill /F /FI \"WINDOWTITLE eq EnvTool*\")",
+      "Bash(taskkill /F /FI \"IMAGENAME eq EnvTool.exe\")",
+      "Bash(taskkill /F /PID 2524)",
+      "Bash(wmic process *)",
+      "Bash(cmd.exe *)",
+      "Bash(powershell *)",
+      "Bash(xargs -I{} cmd.exe /C \"taskkill /F /PID {}\")",
+      "Bash(git *)",
+      "Bash(cmd //c \"dotnet test Tests\\\\\\\\Tests.fsproj\")",
+      "Bash(where.exe dotnet *)",
+      "mcp__plugin_claude-mem_mcp-search__smart_unfold"
+    ]
+  }
+}

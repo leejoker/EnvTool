@@ -6,9 +6,8 @@ open Avalonia.Markup.Xaml
 type MavenManagementWindow() as this =
     inherit Window()
 
-    do this.Width <- 800
-    do this.Height <- 450
-    do this.CanResize <- false
+    do this.Width <- 900
+    do this.Height <- 650
     do this.InitializeComponent()
 
     member private this.InitializeComponent() =

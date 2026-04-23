@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+本项目使用中文进行交互。所有回复、注释和文档均使用中文。
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Build Commands
