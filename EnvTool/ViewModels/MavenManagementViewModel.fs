@@ -29,7 +29,7 @@ type MavenManagementViewModel() as this =
     let mutable newSourceUrl = ""
 
     let showAddDialogCmd = ReactiveCommand.Create(Action(this.ShowAddDialog))
-    let addSourceCmd = ReactiveCommand.Create(Action(this.AddSourceFromDialog))
+    let addSourceFromDialogCmd = ReactiveCommand.Create(Action(this.AddSourceFromDialog))
     let cancelAddDialogCmd = ReactiveCommand.Create(Action(this.CancelAddDialog))
 
     let loadDataCmd = ReactiveCommand.Create(Action(this.LoadData))
@@ -85,7 +85,7 @@ type MavenManagementViewModel() as this =
         and set v = this.RaiseAndSetIfChanged(&newSourceUrl, v) |> ignore
 
     member this.ShowAddDialogCommand: ICommand = showAddDialogCmd
-    member this.AddSourceCommand: ICommand = addSourceCmd
+    member this.AddSourceFromDialogCommand: ICommand = addSourceFromDialogCmd
     member this.CancelAddDialogCommand: ICommand = cancelAddDialogCmd
 
     member this.LoadData() =
@@ -153,6 +153,7 @@ type MavenManagementViewModel() as this =
 
     member this.AddSourceFromDialog() =
         if not (String.IsNullOrWhiteSpace(this.NewSourceId)) &&
+           not (String.IsNullOrWhiteSpace(this.NewSourceName)) &&
            not (String.IsNullOrWhiteSpace(this.NewSourceUrl)) then
             this.AddSource(this.NewSourceId, this.NewSourceName, this.NewSourceUrl)
             this.IsAddDialogOpen <- false
