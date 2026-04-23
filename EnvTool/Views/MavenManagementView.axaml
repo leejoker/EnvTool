@@ -37,13 +37,8 @@
 
     <DockPanel>
         <DockPanel Dock="Top" Height="40" LastChildFill="False">
-            <Button Classes="back"
-                    Command="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).BackToMainView}">
-                &lt;
-            </Button>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10 0 0 0">
                 <TextBlock FontWeight="Bold" Text="{Binding CurrentVersion, StringFormat='Maven: {0}'}" />
-                <TextBlock FontWeight="Bold" Margin="20 0 0 0" Text="{Binding MavenHome, StringFormat='MAVEN_HOME: {0}'}" />
             </StackPanel>
         </DockPanel>
 
@@ -54,24 +49,48 @@
             </StackPanel>
         </DockPanel>
 
-        <TabControl>
+        <TabControl SelectedIndex="{Binding SelectedTabIndex}">
             <TabItem Header="源管理">
                 <DockPanel>
                     <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Spacing="10" Margin="0 10 0 0">
+                        <Button Content="新增" Command="{Binding ShowAddDialogCommand}" />
                         <Button Content="删除" Command="{Binding RemoveSourceCommand}" />
                         <Button Content="设为默认" Command="{Binding SetDefaultSourceCommand}" />
                     </StackPanel>
-                    <ListBox ItemsSource="{Binding Sources}" SelectedItem="{Binding SelectedSource}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate x:DataType="vm:MavenSourceItem">
-                                <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <TextBlock Text="{Binding Name}" Width="120" />
-                                    <TextBlock Text="{Binding Url}" Width="300" />
-                                    <TextBlock Text="{Binding IsDefault}" Width="60" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                    <StackPanel>
+                        <Border BorderThickness="0 0 0 1" BorderBrush="Gray" Margin="0 0 0 5">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="300" />
+                                    <ColumnDefinition Width="80" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="ID" FontWeight="Bold" />
+                                <TextBlock Grid.Column="1" Text="名称" FontWeight="Bold" />
+                                <TextBlock Grid.Column="2" Text="地址" FontWeight="Bold" />
+                                <TextBlock Grid.Column="3" Text="默认" FontWeight="Bold" />
+                            </Grid>
+                        </Border>
+                        <ListBox ItemsSource="{Binding Sources}" SelectedItem="{Binding SelectedSource}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate x:DataType="vm:MavenSourceItem">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="150" />
+                                            <ColumnDefinition Width="150" />
+                                            <ColumnDefinition Width="300" />
+                                            <ColumnDefinition Width="80" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Id}" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Name}" />
+                                        <TextBlock Grid.Column="2" Text="{Binding Url}" />
+                                        <TextBlock Grid.Column="3" Text="{Binding IsDefault}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
                 </DockPanel>
             </TabItem>
             <TabItem Header="settings.xml">
@@ -81,4 +100,30 @@
             </TabItem>
         </TabControl>
     </DockPanel>
+    <Window x:Name="AddSourceDialog"
+            Title="添加 Maven 镜像源"
+            Width="400"
+            Height="200"
+            WindowStartupLocation="CenterOwner"
+            CanResize="False"
+            IsVisible="{Binding IsAddDialogOpen}">
+        <StackPanel Margin="20" Spacing="10">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="ID:" VerticalAlignment="Center" Width="60" />
+                <TextBox Text="{Binding NewSourceId}" Width="280" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="名称:" VerticalAlignment="Center" Width="60" />
+                <TextBox Text="{Binding NewSourceName}" Width="280" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="地址:" VerticalAlignment="Center" Width="60" />
+                <TextBox Text="{Binding NewSourceUrl}" Width="280" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right" Margin="0 10 0 0">
+                <Button Content="取消" Command="{Binding CancelAddDialogCommand}" Width="80" />
+                <Button Content="确定" Command="{Binding AddSourceFromDialogCommand}" Width="80" />
+            </StackPanel>
+        </StackPanel>
+    </Window>
 </UserControl>
