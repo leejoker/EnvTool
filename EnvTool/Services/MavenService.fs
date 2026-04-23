@@ -21,6 +21,8 @@ module MavenService =
         Path.Combine(home, ".m2", "settings.xml")
 #endif
 
+    let private mavenNs = XNamespace.Get("http://maven.apache.org/SETTINGS/1.0.0")
+
     let GetVersion () =
         try
             let p = new System.Diagnostics.Process()
@@ -77,19 +79,19 @@ module MavenService =
         | Some(content) ->
             try
                 let doc = XDocument.Parse(content)
-                let mirrorsElement = doc.Descendants("mirrors") |> Seq.tryHead
+                let mirrorsElement = doc.Descendants(mavenNs + "mirrors") |> Seq.tryHead
 
                 match mirrorsElement with
                 | Some(mirrors) ->
-                    mirrors.Elements("mirror")
+                    mirrors.Elements(mavenNs + "mirror")
                     |> Seq.map (fun (m: XElement) ->
-                        let idAttr = m.Attribute(XName.Get("id"))
-                        let nameAttr = m.Attribute(XName.Get("name"))
-                        let urlElem = m.Element(XName.Get("url"))
-                        let id = if idAttr <> null then idAttr.Value else ""
-                        let name = if nameAttr <> null then nameAttr.Value else ""
+                        let idElem = m.Element(mavenNs + "id")
+                        let nameElem = m.Element(mavenNs + "name")
+                        let urlElem = m.Element(mavenNs + "url")
+                        let id = if idElem <> null then idElem.Value else ""
+                        let name = if nameElem <> null then nameElem.Value else ""
                         let url = if urlElem <> null then urlElem.Value else ""
-                        let isDefault = idAttr <> null && idAttr.Value = "central"
+                        let isDefault = idElem <> null && idElem.Value = "central"
                         { Id = id; Name = name; Url = url; IsDefault = isDefault })
                     |> Seq.toList
                 | None -> getDefaultSources()
@@ -98,30 +100,30 @@ module MavenService =
         | None -> getDefaultSources()
 
     let AddSource (source: MavenSource) =
-        let content = GetSettingsContent() |> Option.defaultValue "<settings></settings>"
+        let content = GetSettingsContent() |> Option.defaultValue "<settings xmlns=\"http://maven.apache.org/SETTINGS/1.0.0\"></settings>"
         try
             let doc = XDocument.Parse(content)
 
             let settings =
-                match doc.Elements("settings") |> Seq.tryHead with
+                match doc.Elements(mavenNs + "settings") |> Seq.tryHead with
                 | Some(s) -> s
                 | None ->
-                    let newSettings = XElement("settings")
+                    let newSettings = XElement(mavenNs + "settings")
                     doc.Add(newSettings)
                     newSettings
 
             let mirrors =
-                match settings.Elements("mirrors") |> Seq.tryHead with
+                match settings.Elements(mavenNs + "mirrors") |> Seq.tryHead with
                 | Some(m) -> m
                 | None ->
-                    let newMirrors = XElement("mirrors")
+                    let newMirrors = XElement(mavenNs + "mirrors")
                     settings.Add(newMirrors)
                     newMirrors
 
-            let newMirror = XElement("mirror")
-            newMirror.Add(XAttribute("id", source.Id))
-            newMirror.Add(XAttribute("name", source.Name))
-            newMirror.Add(XElement("url", source.Url))
+            let newMirror = XElement(mavenNs + "mirror")
+            newMirror.Add(XElement(mavenNs + "id", source.Id))
+            newMirror.Add(XElement(mavenNs + "name", source.Name))
+            newMirror.Add(XElement(mavenNs + "url", source.Url))
             mirrors.Add(newMirror)
 
             SaveSettings(doc.ToString())
@@ -134,13 +136,13 @@ module MavenService =
         | Some(content) ->
             try
                 let doc = XDocument.Parse(content)
-                let mirrors = doc.Descendants("mirrors") |> Seq.tryHead
+                let mirrors = doc.Descendants(mavenNs + "mirrors") |> Seq.tryHead
 
                 match mirrors with
                 | Some(mirrorsElement) ->
                     let mirrorToRemove =
-                        mirrorsElement.Elements("mirror")
-                        |> Seq.tryFind (fun m -> m.Attribute("id").Value = id)
+                        mirrorsElement.Elements(mavenNs + "mirror")
+                        |> Seq.tryFind (fun m -> m.Element(mavenNs + "id").Value = id)
 
                     match mirrorToRemove with
                     | Some(m) ->
@@ -158,26 +160,27 @@ module MavenService =
         | Some(content) ->
             try
                 let doc = XDocument.Parse(content)
-                let mirrors = doc.Descendants("mirrors") |> Seq.tryHead
+                let mirrors = doc.Descendants(mavenNs + "mirrors") |> Seq.tryHead
 
                 match mirrors with
                 | Some(mirrorsElement) ->
                     // Reset all mirrors to non-default
-                    mirrorsElement.Elements("mirror")
+                    mirrorsElement.Elements(mavenNs + "mirror")
                     |> Seq.iter (fun m ->
-                        let existingId = m.Attribute("id") |> Option.ofObj |> Option.map (fun a -> a.Value)
-                        if existingId = Some("central") then
-                            m.Attribute("id").Remove()
+                        let idElem = m.Element(mavenNs + "id")
+                        if idElem <> null && idElem.Value = "central" then
+                            idElem.SetValue("")
                     )
 
                     // Find the mirror with the given id and add central id to it
                     let targetMirror =
-                        mirrorsElement.Elements("mirror")
-                        |> Seq.tryFind (fun m -> m.Attribute("id").Value = id)
+                        mirrorsElement.Elements(mavenNs + "mirror")
+                        |> Seq.tryFind (fun m -> m.Element(mavenNs + "id").Value = id)
 
                     match targetMirror with
                     | Some(m) ->
-                        m.Attribute("id").SetValue("central")
+                        let idElem = m.Element(mavenNs + "id")
+                        if idElem <> null then idElem.SetValue("central")
                         SaveSettings(doc.ToString())
                         true
                     | None -> false
