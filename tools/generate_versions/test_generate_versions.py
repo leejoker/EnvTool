@@ -71,4 +71,10 @@ def test_parse_liberica_assets():
     }
     assets = parse_liberica_assets(mock_release)
     assert assets["linux"]["amd64"] == "https://github.com/bell-sw/Liberica/releases/download/26.0.1+10/bellsoft-jdk26.0.1+10-linux-amd64-full.tar.gz"
+    assert assets["linux"]["aarch64"] == "https://github.com/bell-sw/Liberica/releases/download/26.0.1+10/bellsoft-jdk26.0.1+10-linux-aarch64-full.tar.gz"
+    assert assets["macos"]["amd64"] == "https://github.com/bell-sw/Liberica/releases/download/26.0.1+10/bellsoft-jdk26.0.1+10-macos-amd64-full.zip"
+    assert assets["macos"]["aarch64"] == "https://github.com/bell-sw/Liberica/releases/download/26.0.1+10/bellsoft-jdk26.0.1+10-macos-aarch64-full.zip"
     assert assets["windows"]["amd64"] == "https://github.com/bell-sw/Liberica/releases/download/26.0.1+10/bellsoft-jdk26.0.1+10-windows-amd64-full.zip"
+    # Verify filtered items are absent (lite and deb packages should not appear)
+    # Since assets is a nested dict, check that only expected keys exist
+    assert "lite" not in str(assets)
