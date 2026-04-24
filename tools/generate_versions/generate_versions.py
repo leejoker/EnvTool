@@ -12,6 +12,88 @@ import requests
 
 ADOPTIUM_API_BASE = "https://api.adoptium.net/v3/assets/latest"
 
+GITHUB_API_HEADERS = {
+    "Accept": "application/vnd.github+json",
+    "User-Agent": "version-json-generator"
+}
+
+GRAALVM_REPO = "graalvm/graalvm-ce-builds"
+
+
+def parse_graalvm_assets(release: Dict[str, Any]) -> Dict[str, Dict[str, str]]:
+    """Parse GraalVM release assets into download URLs"""
+    result: Dict[str, Dict[str, str]] = {
+        "windows": {},
+        "linux": {},
+        "macos": {}
+    }
+
+    tag = release.get("tag_name", "")
+    base_download_url = f"https://github.com/{GRAALVM_REPO}/releases/download/{tag}"
+
+    platform_mapping = {
+        ("linux", "x64"): ("linux", "amd64"),
+        ("linux", "aarch64"): ("linux", "aarch64"),
+        ("macos", "x64"): ("macos", "amd64"),
+        ("macos", "aarch64"): ("macos", "aarch64"),
+        ("windows", "x64"): ("windows", "amd64"),
+    }
+
+    for asset in release.get("assets", []):
+        name = asset.get("name", "")
+        if not (name.endswith(".tar.gz") or name.endswith(".zip")):
+            continue
+        if "graalvm-community-jdk" not in name:
+            continue
+
+        # Parse platform and arch from filename
+        # Format: graalvm-community-jdk-{version}_{platform}-{arch}_bin.{ext}
+        parts = name.replace(".tar.gz", "").replace(".zip", "").split("_")
+        if len(parts) < 3:
+            continue
+
+        platform_arch = parts[-2]  # e.g., "linux-x64" or "windows-x64"
+        platform_arch_parts = platform_arch.split("-")
+        if len(platform_arch_parts) < 2:
+            continue
+
+        os_name = platform_arch_parts[0]
+        arch = platform_arch_parts[1]
+
+        if (os_name, arch) in platform_mapping:
+            target_os, target_arch = platform_mapping[(os_name, arch)]
+            download_url = f"{base_download_url}/{name}"
+            result[target_os][target_arch] = download_url
+
+    return result
+
+
+def fetch_graalvm_versions() -> Dict[str, Dict[str, str]]:
+    """
+    Fetch latest GraalVM release from GitHub API.
+
+    Returns:
+        Dict mapping platform/arch to download URL.
+    """
+    result: Dict[str, Dict[str, str]] = {
+        "windows": {},
+        "linux": {},
+        "macos": {}
+    }
+
+    url = f"https://api.github.com/repos/{GRAALVM_REPO}/releases/latest"
+    try:
+        resp = requests.get(url, headers=GITHUB_API_HEADERS, timeout=30)
+        resp.raise_for_status()
+        release = resp.json()
+
+        result = parse_graalvm_assets(release)
+
+    except requests.RequestException as e:
+        print(f"Warning: Failed to fetch GraalVM release: {e}")
+
+    return result
+
 
 def extract_adoptium_url(data: Dict[str, Any], arch: str, os_name: str) -> Optional[str]:
     """Extract download URL from Adoptium API response"""
