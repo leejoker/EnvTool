@@ -39,6 +39,8 @@
         <DockPanel Dock="Top" Height="40" LastChildFill="False">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10 0 0 0">
                 <TextBlock FontWeight="Bold" Text="{Binding CurrentVersion, StringFormat='Maven: {0}'}" />
+                <TextBlock FontWeight="Bold" Text=" | " Margin="5 0" />
+                <TextBlock FontWeight="Bold" Text="{Binding MavenHome, StringFormat='Home: {0}'}" />
             </StackPanel>
         </DockPanel>
 

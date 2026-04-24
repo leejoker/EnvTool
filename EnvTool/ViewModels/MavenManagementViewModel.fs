@@ -19,6 +19,7 @@ type MavenManagementViewModel() as this =
     inherit ViewModelBase()
 
     let mutable currentVersion = ""
+    let mutable mavenHome = ""
     let mutable settingsContent = ""
     let mutable selectedSource: MavenSourceItem option = None
     let mutable selectedTabIndex = 0
@@ -54,6 +55,10 @@ type MavenManagementViewModel() as this =
     member this.CurrentVersion
         with get () = currentVersion
         and set v = this.RaiseAndSetIfChanged(&currentVersion, v) |> ignore
+
+    member this.MavenHome
+        with get () = mavenHome
+        and set v = this.RaiseAndSetIfChanged(&mavenHome, v) |> ignore
 
     member this.SettingsContent
         with get () = settingsContent
@@ -91,12 +96,16 @@ type MavenManagementViewModel() as this =
 
     member this.LoadData() =
         // Auto-detect and set MAVEN_HOME if not already set
-        match MavenService.GetMavenHome() with
-        | Some(mavenHome) ->
-            let currentMavenHome = Environment.GetEnvironmentVariable("MAVEN_HOME")
-            if String.IsNullOrEmpty(currentMavenHome) then
-                ignore (SetUserEnvironmentVariable "MAVEN_HOME" mavenHome)
-        | None -> ()
+        let detectedHome =
+            match MavenService.GetMavenHome() with
+            | Some(mavenHome) ->
+                let currentMavenHome = Environment.GetEnvironmentVariable("MAVEN_HOME")
+                if String.IsNullOrEmpty(currentMavenHome) then
+                    ignore (SetUserEnvironmentVariable "MAVEN_HOME" mavenHome)
+                Some(mavenHome)
+            | None -> None
+
+        this.MavenHome <- match detectedHome with Some(h) -> h | None -> "Not found"
 
         this.CurrentVersion <-
             match MavenService.GetVersion() with
