@@ -48,8 +48,16 @@ module MavenService =
                 | _ -> None
 
             let p = new System.Diagnostics.Process()
+            // On Windows, where returns .cmd path but it's not executable directly
+            // so we need to use cmd /c to run it
+#if Windows
+            let mvnCmd = match mvnPath with Some(path) -> $"cmd /c \"{path}\"" | None -> "mvn"
+            p.StartInfo.FileName <- "cmd"
+            p.StartInfo.Arguments <- "/c mvn --version"
+#else
             p.StartInfo.FileName <- match mvnPath with Some(path) -> path | None -> "mvn"
             p.StartInfo.Arguments <- "--version"
+#endif
             p.StartInfo.UseShellExecute <- false
             p.StartInfo.RedirectStandardOutput <- true
             p.StartInfo.RedirectStandardError <- true
