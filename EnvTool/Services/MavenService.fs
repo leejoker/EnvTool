@@ -31,7 +31,7 @@ module MavenService =
         try
             let p = new System.Diagnostics.Process()
             p.StartInfo.FileName <- "mvn"
-            p.StartInfo.Arguments <- "-version"
+            p.StartInfo.Arguments <- "--version"
             p.StartInfo.UseShellExecute <- false
             p.StartInfo.RedirectStandardOutput <- true
             p.StartInfo.RedirectStandardError <- true
@@ -46,6 +46,12 @@ module MavenService =
             p.WaitForExit()
             p.Close()
 
+            // Debug output
+            printfn "MavenService GetVersion - stdout length: %d" output.Length
+            printfn "MavenService GetVersion - stderr length: %d" errorOutput.Length
+            printfn "MavenService GetVersion - stdout first 500 chars: %s" (if output.Length > 500 then output.Substring(0, 500) else output)
+            printfn "MavenService GetVersion - stderr first 500 chars: %s" (if errorOutput.Length > 500 then errorOutput.Substring(0, 500) else errorOutput)
+
             // Use stderr if stdout is empty (some Maven versions output to stderr)
             let mavenOutput = if String.IsNullOrEmpty(output) then errorOutput else output
 
@@ -57,7 +63,7 @@ module MavenService =
                 let parts = line.Split(' ')
                 if parts.Length >= 3 then parts[2] else "")
         with
-        | _ -> None
+        | ex -> printfn "MavenService GetVersion exception: %A" ex; None
 
     let GetMavenHome () =
         // First try environment variables
