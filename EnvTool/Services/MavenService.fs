@@ -14,7 +14,11 @@ type MavenSource = {
 module MavenService =
     let private getSettingsPath () =
 #if Windows
-        let userProfile = Environment.GetEnvironmentVariable("USERPROFILE")
+        let userProfile =
+            Environment.GetEnvironmentVariable("USERPROFILE")
+            |> Option.ofObj
+            |> Option.orElseWith (fun () -> Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) |> Option.ofObj)
+            |> Option.defaultWith (fun () -> Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData))
         Path.Combine(userProfile, ".m2", "settings.xml")
 #else
         let home = Environment.GetEnvironmentVariable("HOME")

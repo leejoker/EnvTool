@@ -3,6 +3,7 @@ namespace EnvTool.Views
 open Avalonia.Controls
 open Avalonia.Markup.Xaml
 open Avalonia.Interactivity
+open Avalonia.Platform
 open EnvTool.ViewModels
 
 
@@ -17,5 +18,6 @@ type MavenManagementView() as this =
         let dialog = new AddSourceDialogWindow()
         let vm = this.DataContext :?> MavenManagementViewModel
         dialog.DataContext <- vm
-        let result = dialog.ShowDialog<bool>(this)
+        let window = TopLevel.GetTopLevel(this) :?> Window
+        let result = dialog.ShowDialog<bool>(window)
         result |> ignore

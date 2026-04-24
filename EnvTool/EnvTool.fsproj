@@ -53,8 +53,8 @@
 
     <ItemGroup>
         <Compile Include="Views\JdkManagementView.axaml.fs"/>
-        <Compile Include="Views\MavenManagementView.axaml.fs"/>
         <Compile Include="Views\AddSourceDialogWindow.axaml.fs"/>
+        <Compile Include="Views\MavenManagementView.axaml.fs"/>
         <Compile Include="Views\JavaConfigWindow.axaml.fs"/>
         <Compile Include="Views\MavenManagementWindow.axaml.fs"/>
         <Compile Include="Views\ProxyConfigView.axaml.fs"/>
