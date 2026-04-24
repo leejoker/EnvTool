@@ -29,8 +29,26 @@ module MavenService =
 
     let GetVersion () =
         try
+            // First try to find mvn full path
+            let mvnPath =
+                try
+                    let p = new System.Diagnostics.Process()
+                    p.StartInfo.FileName <- "where"
+                    p.StartInfo.Arguments <- "mvn"
+                    p.StartInfo.UseShellExecute <- false
+                    p.StartInfo.RedirectStandardOutput <- true
+                    p.StartInfo.RedirectStandardError <- true
+                    p.StartInfo.CreateNoWindow <- true
+                    p.Start() |> ignore
+                    let output = p.StandardOutput.ReadLine()
+                    p.WaitForExit()
+                    p.Close()
+                    if String.IsNullOrEmpty(output) then None else Some(output)
+                with
+                | _ -> None
+
             let p = new System.Diagnostics.Process()
-            p.StartInfo.FileName <- "mvn"
+            p.StartInfo.FileName <- match mvnPath with Some(path) -> path | None -> "mvn"
             p.StartInfo.Arguments <- "--version"
             p.StartInfo.UseShellExecute <- false
             p.StartInfo.RedirectStandardOutput <- true
@@ -45,12 +63,6 @@ module MavenService =
             let errorOutput = p.StandardError.ReadToEnd()
             p.WaitForExit()
             p.Close()
-
-            // Debug output
-            printfn "MavenService GetVersion - stdout length: %d" output.Length
-            printfn "MavenService GetVersion - stderr length: %d" errorOutput.Length
-            printfn "MavenService GetVersion - stdout first 500 chars: %s" (if output.Length > 500 then output.Substring(0, 500) else output)
-            printfn "MavenService GetVersion - stderr first 500 chars: %s" (if errorOutput.Length > 500 then errorOutput.Substring(0, 500) else errorOutput)
 
             // Use stderr if stdout is empty (some Maven versions output to stderr)
             let mavenOutput = if String.IsNullOrEmpty(output) then errorOutput else output
