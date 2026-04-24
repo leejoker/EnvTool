@@ -1,6 +1,12 @@
 """Tests for generate_versions.py"""
 import pytest
-from generate_versions import extract_adoptium_url, parse_graalvm_assets, parse_liberica_assets
+from unittest.mock import patch, MagicMock
+from generate_versions import (
+    extract_adoptium_url,
+    parse_graalvm_assets,
+    parse_liberica_assets,
+    generate_version_json,
+)
 
 
 def test_extract_adoptium_url_found():
@@ -78,3 +84,32 @@ def test_parse_liberica_assets():
     # Verify filtered items are absent (lite and deb packages should not appear)
     # Since assets is a nested dict, check that only expected keys exist
     assert "lite" not in str(assets)
+
+
+def test_generate_version_json_structure():
+    """Test that generate_version_json produces correct structure"""
+    # This test verifies the structure without making actual API calls
+    # by mocking the fetch functions
+    mock_adoptium = {"windows": {"amd64": "https://example.com/openjdk.zip"}, "linux": {}, "macos": {}}
+    mock_graalvm = {"windows": {"amd64": "https://example.com/graalvm.zip"}, "linux": {}, "macos": {}}
+    mock_liberica = {"windows": {"amd64": "https://example.com/liberica.zip"}, "linux": {}, "macos": {}}
+
+    with patch("generate_versions.fetch_adoptium_versions", return_value=mock_adoptium), \
+         patch("generate_versions.fetch_graalvm_versions", return_value=mock_graalvm), \
+         patch("generate_versions.fetch_liberica_versions", return_value=mock_liberica):
+        result = generate_version_json(["25", "21", "17"])
+
+    assert "openjdk" in result
+    assert "graalvm" in result
+    assert "liberica" in result
+    assert "25" in result["openjdk"]
+    assert "21" in result["openjdk"]
+    assert "17" in result["openjdk"]
+    # Each version should have platform keys and LTS flag
+    assert "windows" in result["openjdk"]["25"]
+    assert "linux" in result["openjdk"]["25"]
+    assert "macos" in result["openjdk"]["25"]
+    # LTS should be set for 21 and 17 but not 25
+    assert result["openjdk"]["21"]["LTS"] is True
+    assert result["openjdk"]["17"]["LTS"] is True
+    assert result["openjdk"]["25"]["LTS"] is False

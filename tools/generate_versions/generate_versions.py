@@ -247,14 +247,64 @@ def fetch_adoptium_versions(version: str) -> Dict[str, Dict[str, str]]:
     return result
 
 
+LTS_VERSIONS = {"21", "17"}  # OpenJDK 21 and 17 are LTS
+
+
+def generate_version_json(versions: list) -> Dict[str, Any]:
+    """
+    Generate complete version.json structure.
+
+    Args:
+        versions: List of JDK major versions to fetch (e.g., ["25", "21", "17"])
+
+    Returns:
+        Complete version.json structure
+    """
+    result: Dict[str, Any] = {}
+
+    # OpenJDK
+    openjdk_data: Dict[str, Any] = {}
+    for version in versions:
+        version_data = fetch_adoptium_versions(version)
+        version_data_copy = version_data.copy()
+        version_data_copy["LTS"] = version in LTS_VERSIONS
+        openjdk_data[version] = version_data_copy
+    result["openjdk"] = openjdk_data
+
+    # GraalVM
+    graalvm_data: Dict[str, Any] = {}
+    graalvm_versions = fetch_graalvm_versions()
+    for version in versions:
+        # GraalVM uses different versioning, use same latest for all
+        graalvm_data[version] = graalvm_versions.copy()
+    result["graalvm"] = graalvm_data
+
+    # Liberica
+    liberica_data: Dict[str, Any] = {}
+    liberica_versions = fetch_liberica_versions()
+    for version in versions:
+        liberica_data[version] = liberica_versions.copy()
+    result["liberica"] = liberica_data
+
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser(description="Generate version.json for JDK distributions")
     parser.add_argument("--output", default="./version.json", help="Output file path")
     parser.add_argument("--jdk-versions", default="25,21,17", help="Comma-separated JDK versions")
     args = parser.parse_args()
 
-    versions = [v.strip() for v in args.jdk_versions.split(",")]
+    versions = [v.strip() for v in args.jdk_versions.split(",") if v.strip()]
     print(f"Generating version.json for versions: {versions}")
+
+    result = generate_version_json(versions)
+
+    output_path = args.output
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(result, f, indent=2, ensure_ascii=False)
+
+    print(f"version.json generated successfully at {output_path}")
 
 
 if __name__ == "__main__":
