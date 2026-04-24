@@ -1,6 +1,6 @@
 """Tests for generate_versions.py"""
 import pytest
-from generate_versions import extract_adoptium_url, parse_graalvm_assets
+from generate_versions import extract_adoptium_url, parse_graalvm_assets, parse_liberica_assets
 
 
 def test_extract_adoptium_url_found():
@@ -52,3 +52,23 @@ def test_parse_graalvm_assets():
     assert assets["linux"]["amd64"] == "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-25.0.2/graalvm-community-jdk-25.0.2_linux-x64_bin.tar.gz"
     assert assets["macos"]["aarch64"] == "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-25.0.2/graalvm-community-jdk-25.0.2_macos-aarch64_bin.tar.gz"
     assert assets["windows"]["amd64"] == "https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-25.0.2/graalvm-community-jdk-25.0.2_windows-x64_bin.zip"
+
+
+def test_parse_liberica_assets():
+    """Test Liberica release asset parsing"""
+    mock_release = {
+        "tag_name": "26.0.1+10",
+        "assets": [
+            {"name": "bellsoft-jdk26.0.1+10-linux-amd64-full.tar.gz"},
+            {"name": "bellsoft-jdk26.0.1+10-linux-aarch64-full.tar.gz"},
+            {"name": "bellsoft-jdk26.0.1+10-macos-amd64-full.zip"},
+            {"name": "bellsoft-jdk26.0.1+10-macos-aarch64-full.zip"},
+            {"name": "bellsoft-jdk26.0.1+10-windows-amd64-full.zip"},
+            # Should be ignored
+            {"name": "bellsoft-jdk26.0.1+10-linux-amd64-full.deb"},
+            {"name": "bellsoft-jdk26.0.1+10-linux-amd64-lite.tar.gz"},
+        ]
+    }
+    assets = parse_liberica_assets(mock_release)
+    assert assets["linux"]["amd64"] == "https://github.com/bell-sw/Liberica/releases/download/26.0.1+10/bellsoft-jdk26.0.1+10-linux-amd64-full.tar.gz"
+    assert assets["windows"]["amd64"] == "https://github.com/bell-sw/Liberica/releases/download/26.0.1+10/bellsoft-jdk26.0.1+10-windows-amd64-full.zip"

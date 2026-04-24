@@ -18,6 +18,7 @@ GITHUB_API_HEADERS = {
 }
 
 GRAALVM_REPO = "graalvm/graalvm-ce-builds"
+LIBERICA_REPO = "bell-sw/Liberica"
 
 
 def parse_graalvm_assets(release: Dict[str, Any]) -> Dict[str, Dict[str, str]]:
@@ -91,6 +92,100 @@ def fetch_graalvm_versions() -> Dict[str, Dict[str, str]]:
 
     except requests.RequestException as e:
         print(f"Warning: Failed to fetch GraalVM release: {e}")
+
+    return result
+
+
+def parse_liberica_assets(release: Dict[str, Any]) -> Dict[str, Dict[str, str]]:
+    """Parse Liberica release assets into download URLs"""
+    result: Dict[str, Dict[str, str]] = {
+        "windows": {},
+        "linux": {},
+        "macos": {}
+    }
+
+    tag = release.get("tag_name", "")
+    base_download_url = f"https://github.com/{LIBERICA_REPO}/releases/download/{tag}"
+
+    # Only process .tar.gz and .zip (full packages, not lite)
+    for asset in release.get("assets", []):
+        name = asset.get("name", "")
+
+        # Skip non-tarball/zip files
+        if not (name.endswith(".tar.gz") or name.endswith(".zip")):
+            continue
+
+        # Skip lite packages
+        if "-lite." in name:
+            continue
+
+        # Parse platform and arch from filename
+        # Format: bellsoft-jdk{version}-{platform}-{arch}-full.{ext}
+        # Examples: bellsoft-jdk26.0.1+10-linux-amd64-full.tar.gz
+        #           bellsoft-jdk26.0.1+10-windows-amd64-full.zip
+        if not name.startswith("bellsoft-jdk"):
+            continue
+
+        parts = name.replace(".tar.gz", "").replace(".zip", "").split("-")
+        if len(parts) < 4:
+            continue
+
+        # Find platform and arch from the parts
+        # Format: bellsoft, jdk{version}, {platform}, {arch}, full
+        arch = None
+        platform = None
+
+        for i, part in enumerate(parts):
+            if part in ("linux", "macos", "windows"):
+                platform = part
+                if i + 1 < len(parts):
+                    arch = parts[i + 1]
+                break
+
+        if not platform or not arch:
+            continue
+
+        # Map to our standard format
+        if platform == "windows":
+            if arch == "amd64":
+                result["windows"]["amd64"] = f"{base_download_url}/{name}"
+        elif platform == "linux":
+            if arch in ("amd64", "x64"):
+                result["linux"]["amd64"] = f"{base_download_url}/{name}"
+            elif arch == "aarch64":
+                result["linux"]["aarch64"] = f"{base_download_url}/{name}"
+        elif platform == "macos":
+            if arch in ("amd64", "x64"):
+                result["macos"]["amd64"] = f"{base_download_url}/{name}"
+            elif arch == "aarch64":
+                result["macos"]["aarch64"] = f"{base_download_url}/{name}"
+
+    return result
+
+
+def fetch_liberica_versions() -> Dict[str, Dict[str, str]]:
+    """
+    Fetch latest Liberica release from GitHub API.
+
+    Returns:
+        Dict mapping platform/arch to download URL.
+    """
+    result: Dict[str, Dict[str, str]] = {
+        "windows": {},
+        "linux": {},
+        "macos": {}
+    }
+
+    url = f"https://api.github.com/repos/{LIBERICA_REPO}/releases/latest"
+    try:
+        resp = requests.get(url, headers=GITHUB_API_HEADERS, timeout=30)
+        resp.raise_for_status()
+        release = resp.json()
+
+        result = parse_liberica_assets(release)
+
+    except requests.RequestException as e:
+        print(f"Warning: Failed to fetch Liberica release: {e}")
 
     return result
 
