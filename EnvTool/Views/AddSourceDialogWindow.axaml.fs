@@ -11,8 +11,6 @@ type AddSourceDialogWindow() as this =
 
     member private this.InitializeComponent() = AvaloniaXamlLoader.Load(this)
 
-    member public this.DataContext with get(): obj = this.DataContext :> obj and set(v: obj) = base.DataContext <- v
-
     member private this.OnOkClick(sender: obj, e: RoutedEventArgs) =
         this.Close(true)
 
