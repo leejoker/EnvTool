@@ -180,7 +180,9 @@ module MavenService =
                 | Some(mirrorsElement) ->
                     let mirrorToRemove =
                         mirrorsElement.Elements(mavenNs + "mirror")
-                        |> Seq.tryFind (fun m -> m.Element(mavenNs + "id").Value = id)
+                        |> Seq.tryFind (fun m ->
+                            let idElem = m.Element(mavenNs + "id")
+                            idElem <> null && idElem.Value = id)
 
                     match mirrorToRemove with
                     | Some(m) ->
@@ -213,7 +215,9 @@ module MavenService =
                     // Find the mirror with the given id and add central id to it
                     let targetMirror =
                         mirrorsElement.Elements(mavenNs + "mirror")
-                        |> Seq.tryFind (fun m -> m.Element(mavenNs + "id").Value = id)
+                        |> Seq.tryFind (fun m ->
+                            let idElem = m.Element(mavenNs + "id")
+                            idElem <> null && idElem.Value = id)
 
                     match targetMirror with
                     | Some(m) ->
