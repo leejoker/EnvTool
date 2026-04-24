@@ -63,6 +63,33 @@ let ``MavenService GetMavenHome returns Some or None`` () =
     | None -> Assert.True(true)
 
 [<Fact>]
+let ``MavenService GetVersion returns Some when mvn is available`` () =
+    let result = MavenService.GetVersion()
+    match result with
+    | Some(version) -> Assert.True(version.Length > 0, $"Expected non-empty version, got: {version}")
+    | None -> Assert.Fail("GetVersion returned None - mvn command may not be in PATH or not configured correctly")
+
+[<Fact>]
+let ``MavenService GetVersion debug test`` () =
+    // Debug test to see actual mvn output
+    let p = new System.Diagnostics.Process()
+    p.StartInfo.FileName <- "mvn"
+    p.StartInfo.Arguments <- "-version"
+    p.StartInfo.UseShellExecute <- false
+    p.StartInfo.RedirectStandardOutput <- true
+    p.StartInfo.RedirectStandardError <- true
+    p.StartInfo.CreateNoWindow <- true
+    p.StartInfo.WorkingDirectory <- System.IO.Directory.GetCurrentDirectory()
+    p.Start() |> ignore
+    let output = p.StandardOutput.ReadToEnd()
+    let error = p.StandardError.ReadToEnd()
+    p.WaitForExit()
+    p.Close()
+    printfn "mvn -version output: %s" output
+    printfn "mvn -version error: %s" error
+    Assert.True(output.Length > 0, $"Expected some output, got empty. Error was: {error}")
+
+[<Fact>]
 let ``MavenService GetSources returns non-empty list`` () =
     let sources = MavenService.GetSources()
     Assert.NotEmpty(sources)
