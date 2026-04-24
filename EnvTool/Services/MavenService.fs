@@ -37,14 +37,20 @@ module MavenService =
             p.StartInfo.RedirectStandardError <- true
             p.StartInfo.CreateNoWindow <- true
             p.StartInfo.WorkingDirectory <- Directory.GetCurrentDirectory()
+            p.StartInfo.StandardOutputEncoding <- System.Text.Encoding.UTF8
+            p.StartInfo.StandardErrorEncoding <- System.Text.Encoding.UTF8
 
             p.Start() |> ignore
             let output = p.StandardOutput.ReadToEnd()
+            let errorOutput = p.StandardError.ReadToEnd()
             p.WaitForExit()
             p.Close()
 
+            // Use stderr if stdout is empty (some Maven versions output to stderr)
+            let mavenOutput = if String.IsNullOrEmpty(output) then errorOutput else output
+
             // Parse Maven version from output like "Apache Maven 3.9.6 ..."
-            let lines = output.Split([|'\n'; '\r'|], StringSplitOptions.RemoveEmptyEntries)
+            let lines = mavenOutput.Split([|'\n'; '\r'|], StringSplitOptions.RemoveEmptyEntries)
             lines
             |> Array.tryFind (fun line -> line.StartsWith("Apache Maven") || line.StartsWith("Maven"))
             |> Option.map (fun line ->
