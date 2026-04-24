@@ -54,9 +54,43 @@ module MavenService =
         | _ -> None
 
     let GetMavenHome () =
+        // First try environment variables
         Environment.GetEnvironmentVariable("MAVEN_HOME")
         |> Option.ofObj
         |> Option.orElseWith (fun () -> Environment.GetEnvironmentVariable("M2_HOME") |> Option.ofObj)
+        |> Option.orElseWith (fun () ->
+            // Try to find mvn in PATH and infer Maven home
+            try
+                let p = new System.Diagnostics.Process()
+#if Windows
+                p.StartInfo.FileName <- "where"
+                p.StartInfo.Arguments <- "mvn"
+#else
+                p.StartInfo.FileName <- "which"
+                p.StartInfo.Arguments <- "mvn"
+#endif
+                p.StartInfo.UseShellExecute <- false
+                p.StartInfo.RedirectStandardOutput <- true
+                p.StartInfo.RedirectStandardError <- true
+                p.StartInfo.CreateNoWindow <- true
+                p.Start() |> ignore
+                let output = p.StandardOutput.ReadLine()
+                p.WaitForExit()
+                p.Close()
+
+                // Parse mvn path: e.g., C:\Program Files\Maven\bin\mvn.cmd
+                // Maven home is two levels up from bin directory
+                match output with
+                | null | "" -> None
+                | path ->
+                    let dir = Path.GetDirectoryName(path)
+                    if String.IsNullOrEmpty(dir) then None
+                    else
+                        let parent = Directory.GetParent(dir)
+                        if parent <> null then Some(parent.FullName) else None
+            with
+            | _ -> None
+        )
 
     let GetSettingsContent () =
         let settingsPath = getSettingsPath ()
