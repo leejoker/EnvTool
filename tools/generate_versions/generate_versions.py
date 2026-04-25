@@ -11,6 +11,7 @@ from typing import Dict, Any, Optional
 import requests
 
 ADOPTIUM_API_BASE = "https://api.adoptium.net/v3/assets/latest"
+ADOPTIUM_INFO_BASE = "https://api.adoptium.net/v3/info"
 
 # Adoptium API uses "hotspot" as the default JVM implementation
 ADOPTIUM_JVM_IMPL = "hotspot"
@@ -207,7 +208,10 @@ def extract_adoptium_url(assets: list, arch: str, os_name: str) -> Optional[str]
     """
     for asset in assets:
         binary = asset.get("binary", {})
-        if binary.get("architecture") == arch and binary.get("os") == os_name:
+        # Only consider JDK images, not testimage, debugimage, etc.
+        if (binary.get("architecture") == arch and
+            binary.get("os") == os_name and
+            binary.get("image_type") == "jdk"):
             pkg = binary.get("package", {})
             if "link" in pkg:
                 return pkg["link"]
@@ -262,19 +266,37 @@ def fetch_adoptium_versions(version: str) -> Dict[str, Dict[str, str]]:
     return result
 
 
-LTS_VERSIONS = {"21", "17"}  # OpenJDK 21 and 17 are LTS
+def get_adoptium_available_versions() -> Dict[str, Any]:
+    """
+    Fetch available JDK versions from Adoptium API.
+
+    Returns:
+        Dict with available_releases, available_lts_releases, most_recent_lts, etc.
+    """
+    url = f"{ADOPTIUM_INFO_BASE}/available_releases"
+    try:
+        resp = requests.get(url, timeout=30)
+        resp.raise_for_status()
+        return resp.json()
+    except requests.RequestException as e:
+        print(f"Warning: Failed to fetch available releases: {e}")
+        return {}
 
 
-def generate_version_json(versions: list) -> Dict[str, Any]:
+def generate_version_json(versions: list, lts_versions: set = None) -> Dict[str, Any]:
     """
     Generate complete version.json structure.
 
     Args:
         versions: List of JDK major versions to fetch (e.g., ["25", "21", "17"])
+        lts_versions: Set of LTS version strings (e.g., {"21", "17"})
 
     Returns:
         Complete version.json structure
     """
+    if lts_versions is None:
+        lts_versions = set()
+
     result: Dict[str, Any] = {}
 
     # OpenJDK
@@ -282,7 +304,7 @@ def generate_version_json(versions: list) -> Dict[str, Any]:
     for version in versions:
         version_data = fetch_adoptium_versions(version)
         version_data_copy = version_data.copy()
-        version_data_copy["LTS"] = version in LTS_VERSIONS
+        version_data_copy["LTS"] = version in lts_versions
         openjdk_data[version] = version_data_copy
     result["openjdk"] = openjdk_data
 
@@ -307,13 +329,33 @@ def generate_version_json(versions: list) -> Dict[str, Any]:
 def main():
     parser = argparse.ArgumentParser(description="Generate version.json for JDK distributions")
     parser.add_argument("--output", default="./version.json", help="Output file path")
-    parser.add_argument("--jdk-versions", default="25,21,17", help="Comma-separated JDK versions")
+    parser.add_argument("--latest", type=int, default=None, help="Number of latest versions to fetch (fetches LTS by default if not specified)")
+    parser.add_argument("--jdk-versions", default=None, help="Comma-separated JDK versions (overrides --latest)")
     args = parser.parse_args()
 
-    versions = [v.strip() for v in args.jdk_versions.split(",") if v.strip()]
-    print(f"Generating version.json for versions: {versions}")
+    # Get available versions from Adoptium API
+    available = get_adoptium_available_versions()
+    lts_versions = set(str(v) for v in available.get("available_lts_releases", []))
+    all_versions = available.get("available_releases", [])
 
-    result = generate_version_json(versions)
+    if args.jdk_versions:
+        # Use explicitly specified versions
+        versions = [v.strip() for v in args.jdk_versions.split(",") if v.strip()]
+        print(f"Using specified versions: {versions}")
+    elif args.latest:
+        # Get latest N versions
+        # Filter to only include versions that have LTS or are in the latest N
+        versions = [str(v) for v in all_versions[-args.latest:]] if args.latest else []
+        # If latest is specified but not LTS only, include all recent versions
+        print(f"Fetching latest {args.latest} versions: {versions}")
+    else:
+        # Default: use all LTS versions
+        versions = [str(v) for v in lts_versions]
+        print(f"Using LTS versions: {versions}")
+
+    print(f"LTS versions detected: {lts_versions}")
+
+    result = generate_version_json(versions, lts_versions)
 
     output_path = args.output
     with open(output_path, "w", encoding="utf-8") as f:

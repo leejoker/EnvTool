@@ -99,7 +99,7 @@ def test_generate_version_json_structure():
     with patch("generate_versions.fetch_adoptium_versions", return_value=mock_adoptium), \
          patch("generate_versions.fetch_graalvm_versions", return_value=mock_graalvm), \
          patch("generate_versions.fetch_liberica_versions", return_value=mock_liberica):
-        result = generate_version_json(["25", "21", "17"])
+        result = generate_version_json(["25", "21", "17"], lts_versions={"21", "17"})
 
     assert "openjdk" in result
     assert "graalvm" in result
