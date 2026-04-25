@@ -12,6 +12,9 @@ import requests
 
 ADOPTIUM_API_BASE = "https://api.adoptium.net/v3/assets/latest"
 
+# Adoptium API uses "hotspot" as the default JVM implementation
+ADOPTIUM_JVM_IMPL = "hotspot"
+
 GITHUB_API_HEADERS = {
     "Accept": "application/vnd.github+json",
     "User-Agent": "version-json-generator"
@@ -190,9 +193,20 @@ def fetch_liberica_versions() -> Dict[str, Dict[str, str]]:
     return result
 
 
-def extract_adoptium_url(data: Dict[str, Any], arch: str, os_name: str) -> Optional[str]:
-    """Extract download URL from Adoptium API response"""
-    for binary in data.get("binaries", []):
+def extract_adoptium_url(assets: list, arch: str, os_name: str) -> Optional[str]:
+    """
+    Extract download URL from Adoptium API response.
+
+    Args:
+        assets: List of BinaryAssetView objects from Adoptium API
+        arch: Architecture to filter (e.g., "x64", "aarch64")
+        os_name: OS to filter (e.g., "windows", "linux", "mac")
+
+    Returns:
+        Download URL or None if not found
+    """
+    for asset in assets:
+        binary = asset.get("binary", {})
         if binary.get("architecture") == arch and binary.get("os") == os_name:
             pkg = binary.get("package", {})
             if "link" in pkg:
@@ -225,24 +239,25 @@ def fetch_adoptium_versions(version: str) -> Dict[str, Dict[str, str]]:
     os_map = {
         "windows": "windows",
         "linux": "linux",
-        "macos": "macos"
+        "mac": "macos"  # API uses "mac", we map to "macos"
     }
 
-    for arch, arch_key in arch_map.items():
-        for os_name, os_key in os_map.items():
-            url = f"{ADOPTIUM_API_BASE}/{version}?architecture={arch}&os={os_name}&image_type=jdk"
-            try:
-                resp = requests.get(url, timeout=30)
-                resp.raise_for_status()
-                data = resp.json()
+    # Adoptium API uses /v3/assets/latest/{feature_version}/{jvm_impl}
+    url = f"{ADOPTIUM_API_BASE}/{version}/{ADOPTIUM_JVM_IMPL}"
 
-                download_url = extract_adoptium_url(data, arch, os_name)
+    try:
+        resp = requests.get(url, timeout=30)
+        resp.raise_for_status()
+        assets = resp.json()  # API returns an array of BinaryAssetView
+
+        for arch, arch_key in arch_map.items():
+            for api_os, os_key in os_map.items():
+                download_url = extract_adoptium_url(assets, arch, api_os)
                 if download_url:
                     result[os_key][arch_key] = download_url
 
-            except requests.RequestException as e:
-                print(f"Warning: Failed to fetch {version} {os_name} {arch}: {e}")
-                continue
+    except requests.RequestException as e:
+        print(f"Warning: Failed to fetch OpenJDK {version}: {e}")
 
     return result
 
